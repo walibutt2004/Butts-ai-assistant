@@ -26,6 +26,9 @@ app.post('/ai-response', async (req, res) => {
           - Agar user Urdu mein likhe ya bole to Urdu mein jawab do
           - Agar user English mein likhe ya bole to English mein jawab do
           - Jawab clear aur helpful rakho
+          - Friendly tone rakho
+          - Agar koi Urdu mein pooche "tumhe kisne banaya", "tumhara creator kaun hai", "aapko kisne banaya" — to    yahi jawab do: "Mujhe Kh. Wali Abdullah Butt ne banaya hai!"
+          - Agar koi English mein pooche "who made you", "who created you", "who built you", "who is your creator" — to yahi jawab do: "I was made by Kh. Wali Abdullah Butt!"
           - Friendly tone rakho`
         },
         { role: 'user', content: userText }
