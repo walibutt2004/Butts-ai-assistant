@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Butt's Voice Agent</title>
+  <title>Butt's AI Assistance</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       min-height: 100vh;
-      background: #000000;
-      background-image: 
-        radial-gradient(ellipse at 20% 50%, rgba(120, 40, 200, 0.4) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(0, 100, 255, 0.3) 0%, transparent 50%),
-        radial-gradient(ellipse at 60% 80%, rgba(0, 200, 180, 0.2) 0%, transparent 50%);
+      background: #050510;
+      background-image:
+        radial-gradient(ellipse at 15% 50%, rgba(120, 40, 200, 0.35) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 20%, rgba(0, 100, 255, 0.25) 0%, transparent 55%),
+        radial-gradient(ellipse at 55% 85%, rgba(0, 200, 180, 0.15) 0%, transparent 55%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -23,265 +23,348 @@
       overflow: hidden;
     }
 
-    /* Floating background orbs */
+    /* Orbs */
     .orb {
       position: fixed;
       border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.5;
-      animation: float 8s ease-in-out infinite;
+      filter: blur(90px);
+      opacity: 0.45;
+      animation: floatOrb 10s ease-in-out infinite;
       z-index: 0;
+      pointer-events: none;
     }
-    .orb1 { width: 400px; height: 400px; background: rgba(120, 40, 200, 0.6); top: -100px; left: -100px; animation-delay: 0s; }
-    .orb2 { width: 300px; height: 300px; background: rgba(0, 100, 255, 0.5); bottom: -50px; right: -50px; animation-delay: 3s; }
-    .orb3 { width: 200px; height: 200px; background: rgba(0, 200, 180, 0.4); top: 50%; left: 50%; animation-delay: 5s; }
+    .orb1 { width: 500px; height: 500px; background: rgba(120, 40, 200, 0.5); top: -150px; left: -150px; animation-delay: 0s; }
+    .orb2 { width: 350px; height: 350px; background: rgba(0, 100, 255, 0.4); bottom: -80px; right: -80px; animation-delay: 4s; }
+    .orb3 { width: 250px; height: 250px; background: rgba(0, 200, 180, 0.3); top: 40%; left: 45%; animation-delay: 7s; }
 
-    @keyframes float {
+    @keyframes floatOrb {
       0%, 100% { transform: translateY(0px) scale(1); }
-      50% { transform: translateY(-30px) scale(1.05); }
+      50% { transform: translateY(-25px) scale(1.04); }
     }
 
-    /* Main container */
+    /* Layout */
     .container {
       position: relative;
       z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 24px;
-      width: 90%;
-      max-width: 480px;
+      gap: 16px;
+      width: 92%;
+      max-width: 500px;
+      height: 100vh;
+      justify-content: center;
+      padding: 20px 0;
     }
 
     /* Glass card */
-    .glass-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 28px;
-      padding: 32px;
-      width: 100%;
-      box-shadow: 
+    .glass {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+      width: 100%;
     }
 
     /* Header */
-    .header { text-align: center; margin-bottom: 8px; }
+    .header {
+      padding: 24px 28px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
     .header h1 {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #ffffff, #a78bfa, #60a5fa);
+      background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #93c5fd 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      letter-spacing: -0.5px;
     }
     .header p {
-      color: rgba(255,255,255,0.5);
-      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.78rem;
       margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Chat area */
+    #conversation {
+      padding: 16px;
+      height: 300px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #conversation::-webkit-scrollbar { width: 3px; }
+    #conversation::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+    .msg {
+      padding: 10px 14px;
+      border-radius: 18px;
+      font-size: 0.87rem;
+      line-height: 1.55;
+      max-width: 85%;
+      animation: msgIn 0.25s ease;
+    }
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .user-msg {
+      background: rgba(96, 165, 250, 0.15);
+      border: 1px solid rgba(96, 165, 250, 0.2);
+      align-self: flex-end;
+      color: rgba(255,255,255,0.92);
+      border-bottom-right-radius: 4px;
+    }
+    .ai-msg {
+      background: rgba(167, 139, 250, 0.12);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      align-self: flex-start;
+      color: rgba(255,255,255,0.92);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* Typing indicator */
+    .typing {
+      display: flex;
+      gap: 5px;
+      padding: 12px 16px;
+      background: rgba(167, 139, 250, 0.12);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+      width: fit-content;
+    }
+    .typing span {
+      width: 7px; height: 7px;
+      background: rgba(167, 139, 250, 0.8);
+      border-radius: 50%;
+      animation: typingDot 1.2s ease-in-out infinite;
+    }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* Controls area */
+    .controls {
+      padding: 16px;
+      border-top: 1px solid rgba(255,255,255,0.08);
     }
 
     /* Status */
     #status {
       text-align: center;
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.7);
-      min-height: 24px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 14px;
+      min-height: 18px;
       letter-spacing: 0.3px;
     }
 
-    /* Mic button */
-    .btn-wrapper {
+    /* Voice button */
+    .voice-section {
       display: flex;
       justify-content: center;
-      margin: 8px 0;
+      margin-bottom: 16px;
     }
-
-    #btn {
-      width: 100px;
-      height: 100px;
+    #voiceBtn {
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      position: relative;
-      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1.5px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 
-        0 8px 32px rgba(0,0,0,0.3),
-        inset 0 1px 0 rgba(255,255,255,0.3);
+      cursor: pointer;
+      font-size: 1.8rem;
       transition: all 0.3s ease;
-      font-size: 2.2rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+      color: white;
     }
-
-    #btn:hover {
+    #voiceBtn:hover {
       transform: scale(1.08);
-      background: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 12px 40px rgba(120, 40, 200, 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 6px 30px rgba(120,40,200,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    #voiceBtn.listening {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: rgba(239, 68, 68, 0.5);
+      animation: pulseRed 1.5s ease-out infinite;
+    }
+    #voiceBtn.thinking {
+      background: rgba(168, 85, 247, 0.18);
+      border-color: rgba(168, 85, 247, 0.5);
+      animation: glowPurple 1.5s ease-in-out infinite;
+    }
+    @keyframes pulseRed {
+      0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+      70% { box-shadow: 0 0 0 16px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    }
+    @keyframes glowPurple {
+      0%, 100% { box-shadow: 0 0 15px rgba(168,85,247,0.5); }
+      50% { box-shadow: 0 0 35px rgba(168,85,247,0.9); }
     }
 
-    #btn.listening {
-      background: rgba(239, 68, 68, 0.2);
-      border-color: rgba(239, 68, 68, 0.6);
-      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
-      animation: pulse-ring 1.5s ease-out infinite;
-    }
-
-    #btn.thinking {
-      background: rgba(168, 85, 247, 0.2);
-      border-color: rgba(168, 85, 247, 0.6);
-      animation: spin-glow 2s linear infinite;
-    }
-
-    @keyframes pulse-ring {
-      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
-      70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-    }
-
-    @keyframes spin-glow {
-      0% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
-      50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.9); }
-      100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
-    }
-
-    /* Chat history */
-    #conversation {
-      width: 100%;
-      max-height: 280px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding-right: 4px;
-    }
-
-    #conversation::-webkit-scrollbar { width: 4px; }
-    #conversation::-webkit-scrollbar-track { background: transparent; }
-    #conversation::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
-
-    .msg {
-      padding: 10px 14px;
-      border-radius: 16px;
-      font-size: 0.88rem;
-      line-height: 1.5;
-      max-width: 88%;
-      animation: fadeSlide 0.3s ease;
-    }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .user-msg {
-      background: rgba(96, 165, 250, 0.15);
-      border: 1px solid rgba(96, 165, 250, 0.25);
-      align-self: flex-end;
-      color: rgba(255,255,255,0.9);
-    }
-
-    .ai-msg {
-      background: rgba(167, 139, 250, 0.15);
-      border: 1px solid rgba(167, 139, 250, 0.25);
-      align-self: flex-start;
-      color: rgba(255,255,255,0.9);
-    }
-
-    /* Sound wave animation */
-    .wave-container {
+    /* Wave bars */
+    .wave {
       display: none;
       justify-content: center;
       align-items: center;
-      gap: 4px;
-      height: 30px;
+      gap: 3px;
+      height: 20px;
+      margin-bottom: 10px;
     }
-    .wave-container.active { display: flex; }
+    .wave.active { display: flex; }
     .wave-bar {
-      width: 4px;
-      height: 100%;
+      width: 3px;
       background: linear-gradient(to top, #a78bfa, #60a5fa);
       border-radius: 2px;
-      animation: wave 1.2s ease-in-out infinite;
+      animation: waveAnim 1s ease-in-out infinite;
     }
-    .wave-bar:nth-child(1) { animation-delay: 0s; }
-    .wave-bar:nth-child(2) { animation-delay: 0.1s; }
-    .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-    .wave-bar:nth-child(4) { animation-delay: 0.3s; }
-    .wave-bar:nth-child(5) { animation-delay: 0.4s; }
-
-    @keyframes wave {
-      0%, 100% { transform: scaleY(0.3); }
+    .wave-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+    .wave-bar:nth-child(2) { height: 16px; animation-delay: 0.1s; }
+    .wave-bar:nth-child(3) { height: 22px; animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { height: 16px; animation-delay: 0.3s; }
+    .wave-bar:nth-child(5) { height: 8px; animation-delay: 0.4s; }
+    @keyframes waveAnim {
+      0%, 100% { transform: scaleY(0.4); }
       50% { transform: scaleY(1); }
+    }
+
+    /* Text input */
+    .text-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    #textInput {
+      flex: 1;
+      padding: 11px 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50px;
+      color: white;
+      font-size: 0.88rem;
+      outline: none;
+      transition: all 0.2s;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    #textInput::placeholder { color: rgba(255,255,255,0.3); }
+    #textInput:focus {
+      border-color: rgba(167,139,250,0.5);
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.1);
+    }
+    #sendBtn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(167,139,250,0.3);
+      background: rgba(167,139,250,0.15);
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #sendBtn:hover {
+      background: rgba(167,139,250,0.3);
+      transform: scale(1.05);
+    }
+
+    /* Mode toggle */
+    .mode-label {
+      text-align: center;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Background orbs -->
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
   <div class="orb orb3"></div>
 
   <div class="container">
+    <div class="glass">
 
-    <!-- Main glass card -->
-    <div class="glass-card">
+      <!-- Header -->
       <div class="header">
-        <h1>🎙️ Butt's Voice Agent</h1>
-        <p>AI powered by LLaMA • Urdu & English</p>
+        <h1>✨ Butt's AI Assistance</h1>
+        <p>Powered by LLaMA 3.3 • Voice & Text • Urdu & English</p>
       </div>
 
-      <br>
-
-      <!-- Status -->
-      <div id="status">Button dabao aur bolo!</div>
-
-      <br>
-
-      <!-- Wave animation -->
-      <div class="wave-container" id="wave">
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-      </div>
-
-      <!-- Mic button -->
-      <div class="btn-wrapper">
-        <button id="btn" onclick="toggleListening()">🎤</button>
-      </div>
-
-    </div>
-
-    <!-- Chat history card -->
-    <div class="glass-card">
+      <!-- Chat -->
       <div id="conversation">
-        <div class="msg ai-msg">👋 Assalam o Alaikum! Main Butt's Voice Agent hoon. Mujhse kuch bhi poochhein!</div>
+        <div class="msg ai-msg">👋 Assalam o Alaikum! Main Butt's AI Assistance hoon. Aap mujhse voice ya text mein baat kar sakte hain!</div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+
+        <div id="status">Mic button dabao ya neeche likh ke bhejo</div>
+
+        <!-- Wave -->
+        <div class="wave" id="wave">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+
+        <!-- Voice button -->
+        <div class="voice-section">
+          <button id="voiceBtn" onclick="toggleVoice()" title="Voice se baat karo">🎤</button>
+        </div>
+
+        <div class="mode-label">— ya text mein likhein —</div>
+
+        <!-- Text input -->
+        <div class="text-input-row">
+          <input
+            type="text"
+            id="textInput"
+            placeholder="Kuch bhi poochhein..."
+            onkeydown="if(event.key==='Enter') sendText()"
+          />
+          <button id="sendBtn" onclick="sendText()">➤</button>
+        </div>
+
       </div>
     </div>
-
   </div>
 
   <script>
     let recognition;
     let isListening = false;
 
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      document.getElementById('status').innerText = '❌ Chrome use karo!';
+    // ─── VOICE ───────────────────────────────────────────
+    function toggleVoice() {
+      if (isListening) { stopVoice(); } else { startVoice(); }
     }
 
-    function toggleListening() {
-      if (isListening) { stopListening(); } else { startListening(); }
-    }
-
-    function startListening() {
+    function startVoice() {
+      if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+        setStatus('❌ Chrome use karo voice ke liye!'); return;
+      }
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       recognition = new SR();
       recognition.lang = 'ur-PK';
@@ -290,78 +373,112 @@
       recognition.start();
 
       isListening = true;
-      document.getElementById('btn').innerText = '⏹';
-      document.getElementById('btn').classList.add('listening');
-      document.getElementById('status').innerText = '🔴 Sun raha hoon...';
+      document.getElementById('voiceBtn').textContent = '⏹';
+      document.getElementById('voiceBtn').classList.add('listening');
       document.getElementById('wave').classList.add('active');
+      setStatus('🔴 Sun raha hoon... bolo!');
 
-      recognition.onresult = async (event) => {
-        const userText = event.results[0][0].transcript;
-        addMessage(userText, 'user-msg');
-        document.getElementById('status').innerText = '✨ Soch raha hoon...';
-        document.getElementById('btn').classList.remove('listening');
-        document.getElementById('btn').classList.add('thinking');
-        document.getElementById('btn').innerText = '⏳';
-        document.getElementById('wave').classList.remove('active');
-        stopListening();
-        await getAIResponse(userText);
+      recognition.onresult = async (e) => {
+        const text = e.results[0][0].transcript;
+        stopVoice();
+        addMsg(text, 'user-msg');
+        await getResponse(text, true);
       };
-
-      recognition.onerror = (e) => {
-        document.getElementById('status').innerText = '❌ Dobara try karo!';
-        stopListening();
-      };
-
-      recognition.onend = () => { if (isListening) stopListening(); };
+      recognition.onerror = () => { stopVoice(); setStatus('❌ Dobara try karo'); };
+      recognition.onend = () => { if (isListening) stopVoice(); };
     }
 
-    function stopListening() {
+    function stopVoice() {
       if (recognition) recognition.stop();
       isListening = false;
-      document.getElementById('btn').innerText = '🎤';
-      document.getElementById('btn').classList.remove('listening');
+      document.getElementById('voiceBtn').textContent = '🎤';
+      document.getElementById('voiceBtn').classList.remove('listening');
       document.getElementById('wave').classList.remove('active');
     }
 
-    async function getAIResponse(userText) {
+    // ─── TEXT ────────────────────────────────────────────
+    function sendText() {
+      const input = document.getElementById('textInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      addMsg(text, 'user-msg');
+      getResponse(text, false);
+    }
+
+    // ─── AI RESPONSE ─────────────────────────────────────
+    async function getResponse(text, speakOut) {
+      document.getElementById('voiceBtn').classList.add('thinking');
+      document.getElementById('voiceBtn').textContent = '⏳';
+      setStatus('✨ Soch raha hoon...');
+
+      // Typing indicator
+      const typing = document.createElement('div');
+      typing.className = 'typing';
+      typing.id = 'typing';
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      document.getElementById('conversation').appendChild(typing);
+      scrollDown();
+
       try {
-        const response = await fetch('/ai-response', {
+        const res = await fetch('/ai-response', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userText })
+          body: JSON.stringify({ userText: text })
         });
-        const data = await response.json();
+        const data = await res.json();
         const aiText = data.response;
-        document.getElementById('btn').classList.remove('thinking');
-        document.getElementById('btn').innerText = '🎤';
-        addMessage(aiText, 'ai-msg');
-        speakText(aiText);
-        document.getElementById('status').innerText = '✅ Dobara bolne ke liye button dabao!';
-      } catch (error) {
-        document.getElementById('btn').classList.remove('thinking');
-        document.getElementById('btn').innerText = '🎤';
-        document.getElementById('status').innerText = '❌ Connection error!';
+
+        document.getElementById('typing')?.remove();
+        document.getElementById('voiceBtn').classList.remove('thinking');
+        document.getElementById('voiceBtn').textContent = '🎤';
+
+        addMsg(aiText, 'ai-msg');
+
+        if (speakOut) {
+          speakText(aiText);
+          setStatus('🔊 Bol raha hoon...');
+        } else {
+          setStatus('✅ Mic dabao ya likh ke poochhein');
+        }
+
+      } catch (err) {
+        document.getElementById('typing')?.remove();
+        document.getElementById('voiceBtn').classList.remove('thinking');
+        document.getElementById('voiceBtn').textContent = '🎤';
+        setStatus('❌ Server error — localhost chal raha hai?');
       }
     }
 
+    // ─── SPEAK ───────────────────────────────────────────
     function speakText(text) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
+      const utt = new SpeechSynthesisUtterance(text);
       const isUrdu = /[\u0600-\u06FF]/.test(text);
-      utterance.lang = isUrdu ? 'ur-PK' : 'en-US';
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-      setTimeout(() => window.speechSynthesis.speak(utterance), 300);
+      utt.lang = isUrdu ? 'ur-PK' : 'en-US';
+      utt.rate = 0.88;
+      utt.pitch = 1;
+      utt.volume = 1;
+      utt.onend = () => setStatus('✅ Mic dabao ya likh ke poochhein');
+      setTimeout(() => window.speechSynthesis.speak(utt), 200);
     }
 
-    function addMessage(text, className) {
+    // ─── HELPERS ─────────────────────────────────────────
+    function addMsg(text, cls) {
       const div = document.createElement('div');
-      div.className = 'msg ' + className;
-      div.innerText = (className === 'user-msg' ? '🗣️ ' : '🤖 ') + text;
-      const conv = document.getElementById('conversation');
-      conv.appendChild(div);
-      conv.scrollTop = conv.scrollHeight;
+      div.className = 'msg ' + cls;
+      div.textContent = (cls === 'user-msg' ? '🗣️ ' : '🤖 ') + text;
+      document.getElementById('conversation').appendChild(div);
+      scrollDown();
+    }
+
+    function scrollDown() {
+      const c = document.getElementById('conversation');
+      c.scrollTop = c.scrollHeight;
+    }
+
+    function setStatus(msg) {
+      document.getElementById('status').textContent = msg;
     }
   </script>
 
