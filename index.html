@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice AI Agent</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #1a1a2e;
+      color: white;
+    }
+    h1 { font-size: 2rem; margin-bottom: 10px; }
+    #status {
+      font-size: 1.1rem;
+      margin: 20px;
+      color: #a0a0ff;
+    }
+    #btn {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: none;
+      background: #e94560;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    #btn:hover { background: #c73652; transform: scale(1.05); }
+    #btn.listening { background: #4CAF50; animation: pulse 1s infinite; }
+    #conversation {
+      margin-top: 30px;
+      width: 80%;
+      max-width: 600px;
+      max-height: 300px;
+      overflow-y: auto;
+      background: #16213e;
+      border-radius: 10px;
+      padding: 15px;
+    }
+    .user-msg { color: #a0d4ff; margin: 8px 0; }
+    .ai-msg { color: #90EE90; margin: 8px 0; }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎙️ Voice AI Agent</h1>
+  <p id="status">Button dabao aur bolo!</p>
+  <button id="btn" onclick="toggleListening()">🎤 Bolo</button>
+  <div id="conversation"></div>
+
+  <script>
+    let recognition;
+    let isListening = false;
+
+    // Browser support check
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      document.getElementById('status').innerText = 
+        '❌ Ye browser support nahi karta. Chrome use karo!';
+    }
+
+    function toggleListening() {
+      if (isListening) {
+        stopListening();
+      } else {
+        startListening();
+      }
+    }
+
+    function startListening() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.start();
+      isListening = true;
+
+      document.getElementById('btn').innerText = '⏹ Roko';
+      document.getElementById('btn').classList.add('listening');
+      document.getElementById('status').innerText = '🔴 Sun raha hoon... bolo!';
+
+      recognition.onresult = async (event) => {
+        const userText = event.results[0][0].transcript;
+        addMessage('Tum: ' + userText, 'user-msg');
+        document.getElementById('status').innerText = '🤔 Soch raha hoon...';
+        stopListening();
+        await getAIResponse(userText);
+      };
+
+      recognition.onerror = (event) => {
+        document.getElementById('status').innerText = '❌ Error: ' + event.error;
+        stopListening();
+      };
+
+      recognition.onend = () => {
+        if (isListening) stopListening();
+      };
+    }
+
+    function stopListening() {
+      if (recognition) recognition.stop();
+      isListening = false;
+      document.getElementById('btn').innerText = '🎤 Bolo';
+      document.getElementById('btn').classList.remove('listening');
+    }
+
+    async function getAIResponse(userText) {
+      try {
+        const response = await fetch('/ai-response', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userText })
+        });
+
+        const data = await response.json();
+        const aiText = data.response;
+
+        addMessage('AI: ' + aiText, 'ai-msg');
+        speakText(aiText);
+        document.getElementById('status').innerText = '✅ Button dabao aur dobara bolo!';
+
+      } catch (error) {
+        document.getElementById('status').innerText = '❌ Server se connection nahi hua!';
+      }
+    }
+
+function speakText(text) {
+  // Pehle cancel karo agar kuch chal raha ho
+  window.speechSynthesis.cancel();
+  
+  const utterance = new SpeechSynthesisUtterance(text);
+  
+  // Pehle English try karo — zyada reliable hai
+  // Language detect karo
+const isUrdu = /[\u0600-\u06FF]/.test(text);
+utterance.lang = isUrdu ? 'ur-PK' : 'en-US';
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  // Voices load hone ka wait karo
+  const voices = window.speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    utterance.voice = voices[0];
+  }
+
+  utterance.onstart = () => {
+    document.getElementById('status').innerText = '🔊 Bol raha hoon...';
+  };
+
+  utterance.onend = () => {
+    document.getElementById('status').innerText = '✅ Button dabao aur dobara bolo!';
+  };
+
+  utterance.onerror = (e) => {
+    console.error('Speech error:', e);
+    document.getElementById('status').innerText = '❌ Awaaz mein masla aaya!';
+  };
+
+  // Thodi delay ke baad bolna shuru karo
+  setTimeout(() => {
+    window.speechSynthesis.speak(utterance);
+  }, 300);
+}
+
+    function addMessage(text, className) {
+      const div = document.createElement('div');
+      div.className = className;
+      div.innerText = text;
+      document.getElementById('conversation').appendChild(div);
+      document.getElementById('conversation').scrollTop = 
+        document.getElementById('conversation').scrollHeight;
+    }
+  </script>
+
+</body>
+</html>
