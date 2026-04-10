@@ -3,119 +3,324 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Voice AI Agent</title>
+  <title>Butt's Voice Agent</title>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      background: #000000;
+      background-image: 
+        radial-gradient(ellipse at 20% 50%, rgba(120, 40, 200, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 100, 255, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(0, 200, 180, 0.2) 0%, transparent 50%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
-      background: #1a1a2e;
+      font-family: 'Segoe UI', sans-serif;
       color: white;
+      overflow: hidden;
     }
-    h1 { font-size: 2rem; margin-bottom: 10px; }
+
+    /* Floating background orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      animation: float 8s ease-in-out infinite;
+      z-index: 0;
+    }
+    .orb1 { width: 400px; height: 400px; background: rgba(120, 40, 200, 0.6); top: -100px; left: -100px; animation-delay: 0s; }
+    .orb2 { width: 300px; height: 300px; background: rgba(0, 100, 255, 0.5); bottom: -50px; right: -50px; animation-delay: 3s; }
+    .orb3 { width: 200px; height: 200px; background: rgba(0, 200, 180, 0.4); top: 50%; left: 50%; animation-delay: 5s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+    }
+
+    /* Main container */
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 90%;
+      max-width: 480px;
+    }
+
+    /* Glass card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px;
+      padding: 32px;
+      width: 100%;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    /* Header */
+    .header { text-align: center; margin-bottom: 8px; }
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    /* Status */
     #status {
-      font-size: 1.1rem;
-      margin: 20px;
-      color: #a0a0ff;
+      text-align: center;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+      min-height: 24px;
+      letter-spacing: 0.3px;
     }
+
+    /* Mic button */
+    .btn-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 8px 0;
+    }
+
     #btn {
-      width: 150px;
-      height: 150px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       border: none;
-      background: #e94560;
-      color: white;
-      font-size: 1.2rem;
       cursor: pointer;
-      transition: all 0.3s;
+      position: relative;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 
+        0 8px 32px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+      transition: all 0.3s ease;
+      font-size: 2.2rem;
     }
-    #btn:hover { background: #c73652; transform: scale(1.05); }
-    #btn.listening { background: #4CAF50; animation: pulse 1s infinite; }
+
+    #btn:hover {
+      transform: scale(1.08);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 40px rgba(120, 40, 200, 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+
+    #btn.listening {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.6);
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+      animation: pulse-ring 1.5s ease-out infinite;
+    }
+
+    #btn.thinking {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: rgba(168, 85, 247, 0.6);
+      animation: spin-glow 2s linear infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+      70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    @keyframes spin-glow {
+      0% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+      50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.9); }
+      100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+    }
+
+    /* Chat history */
     #conversation {
-      margin-top: 30px;
-      width: 80%;
-      max-width: 600px;
-      max-height: 300px;
+      width: 100%;
+      max-height: 280px;
       overflow-y: auto;
-      background: #16213e;
-      border-radius: 10px;
-      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 4px;
     }
-    .user-msg { color: #a0d4ff; margin: 8px 0; }
-    .ai-msg { color: #90EE90; margin: 8px 0; }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
+
+    #conversation::-webkit-scrollbar { width: 4px; }
+    #conversation::-webkit-scrollbar-track { background: transparent; }
+    #conversation::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+    .msg {
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      max-width: 88%;
+      animation: fadeSlide 0.3s ease;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-msg {
+      background: rgba(96, 165, 250, 0.15);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+      align-self: flex-end;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .ai-msg {
+      background: rgba(167, 139, 250, 0.15);
+      border: 1px solid rgba(167, 139, 250, 0.25);
+      align-self: flex-start;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* Sound wave animation */
+    .wave-container {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      height: 30px;
+    }
+    .wave-container.active { display: flex; }
+    .wave-bar {
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to top, #a78bfa, #60a5fa);
+      border-radius: 2px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+    .wave-bar:nth-child(1) { animation-delay: 0s; }
+    .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(0.3); }
+      50% { transform: scaleY(1); }
     }
   </style>
 </head>
 <body>
 
-  <h1>🎙️ Voice AI Agent</h1>
-  <p id="status">Button dabao aur bolo!</p>
-  <button id="btn" onclick="toggleListening()">🎤 Bolo</button>
-  <div id="conversation"></div>
+  <!-- Background orbs -->
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="container">
+
+    <!-- Main glass card -->
+    <div class="glass-card">
+      <div class="header">
+        <h1>🎙️ Butt's Voice Agent</h1>
+        <p>AI powered by LLaMA • Urdu & English</p>
+      </div>
+
+      <br>
+
+      <!-- Status -->
+      <div id="status">Button dabao aur bolo!</div>
+
+      <br>
+
+      <!-- Wave animation -->
+      <div class="wave-container" id="wave">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+      </div>
+
+      <!-- Mic button -->
+      <div class="btn-wrapper">
+        <button id="btn" onclick="toggleListening()">🎤</button>
+      </div>
+
+    </div>
+
+    <!-- Chat history card -->
+    <div class="glass-card">
+      <div id="conversation">
+        <div class="msg ai-msg">👋 Assalam o Alaikum! Main Butt's Voice Agent hoon. Mujhse kuch bhi poochhein!</div>
+      </div>
+    </div>
+
+  </div>
 
   <script>
     let recognition;
     let isListening = false;
 
-    // Browser support check
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      document.getElementById('status').innerText = 
-        '❌ Ye browser support nahi karta. Chrome use karo!';
+      document.getElementById('status').innerText = '❌ Chrome use karo!';
     }
 
     function toggleListening() {
-      if (isListening) {
-        stopListening();
-      } else {
-        startListening();
-      }
+      if (isListening) { stopListening(); } else { startListening(); }
     }
 
     function startListening() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRecognition();
-
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SR();
+      recognition.lang = 'ur-PK';
       recognition.continuous = false;
       recognition.interimResults = false;
-
       recognition.start();
-      isListening = true;
 
-      document.getElementById('btn').innerText = '⏹ Roko';
+      isListening = true;
+      document.getElementById('btn').innerText = '⏹';
       document.getElementById('btn').classList.add('listening');
-      document.getElementById('status').innerText = '🔴 Sun raha hoon... bolo!';
+      document.getElementById('status').innerText = '🔴 Sun raha hoon...';
+      document.getElementById('wave').classList.add('active');
 
       recognition.onresult = async (event) => {
         const userText = event.results[0][0].transcript;
-        addMessage('Tum: ' + userText, 'user-msg');
-        document.getElementById('status').innerText = '🤔 Soch raha hoon...';
+        addMessage(userText, 'user-msg');
+        document.getElementById('status').innerText = '✨ Soch raha hoon...';
+        document.getElementById('btn').classList.remove('listening');
+        document.getElementById('btn').classList.add('thinking');
+        document.getElementById('btn').innerText = '⏳';
+        document.getElementById('wave').classList.remove('active');
         stopListening();
         await getAIResponse(userText);
       };
 
-      recognition.onerror = (event) => {
-        document.getElementById('status').innerText = '❌ Error: ' + event.error;
+      recognition.onerror = (e) => {
+        document.getElementById('status').innerText = '❌ Dobara try karo!';
         stopListening();
       };
 
-      recognition.onend = () => {
-        if (isListening) stopListening();
-      };
+      recognition.onend = () => { if (isListening) stopListening(); };
     }
 
     function stopListening() {
       if (recognition) recognition.stop();
       isListening = false;
-      document.getElementById('btn').innerText = '🎤 Bolo';
+      document.getElementById('btn').innerText = '🎤';
       document.getElementById('btn').classList.remove('listening');
+      document.getElementById('wave').classList.remove('active');
     }
 
     async function getAIResponse(userText) {
@@ -125,65 +330,38 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userText })
         });
-
         const data = await response.json();
         const aiText = data.response;
-
-        addMessage('AI: ' + aiText, 'ai-msg');
+        document.getElementById('btn').classList.remove('thinking');
+        document.getElementById('btn').innerText = '🎤';
+        addMessage(aiText, 'ai-msg');
         speakText(aiText);
-        document.getElementById('status').innerText = '✅ Button dabao aur dobara bolo!';
-
+        document.getElementById('status').innerText = '✅ Dobara bolne ke liye button dabao!';
       } catch (error) {
-        document.getElementById('status').innerText = '❌ Server se connection nahi hua!';
+        document.getElementById('btn').classList.remove('thinking');
+        document.getElementById('btn').innerText = '🎤';
+        document.getElementById('status').innerText = '❌ Connection error!';
       }
     }
 
-function speakText(text) {
-  // Pehle cancel karo agar kuch chal raha ho
-  window.speechSynthesis.cancel();
-  
-  const utterance = new SpeechSynthesisUtterance(text);
-  
-  // Pehle English try karo — zyada reliable hai
-  // Language detect karo
-const isUrdu = /[\u0600-\u06FF]/.test(text);
-utterance.lang = isUrdu ? 'ur-PK' : 'en-US';
-  utterance.rate = 0.9;
-  utterance.pitch = 1;
-  utterance.volume = 1;
-
-  // Voices load hone ka wait karo
-  const voices = window.speechSynthesis.getVoices();
-  if (voices.length > 0) {
-    utterance.voice = voices[0];
-  }
-
-  utterance.onstart = () => {
-    document.getElementById('status').innerText = '🔊 Bol raha hoon...';
-  };
-
-  utterance.onend = () => {
-    document.getElementById('status').innerText = '✅ Button dabao aur dobara bolo!';
-  };
-
-  utterance.onerror = (e) => {
-    console.error('Speech error:', e);
-    document.getElementById('status').innerText = '❌ Awaaz mein masla aaya!';
-  };
-
-  // Thodi delay ke baad bolna shuru karo
-  setTimeout(() => {
-    window.speechSynthesis.speak(utterance);
-  }, 300);
-}
+    function speakText(text) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      const isUrdu = /[\u0600-\u06FF]/.test(text);
+      utterance.lang = isUrdu ? 'ur-PK' : 'en-US';
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+      setTimeout(() => window.speechSynthesis.speak(utterance), 300);
+    }
 
     function addMessage(text, className) {
       const div = document.createElement('div');
-      div.className = className;
-      div.innerText = text;
-      document.getElementById('conversation').appendChild(div);
-      document.getElementById('conversation').scrollTop = 
-        document.getElementById('conversation').scrollHeight;
+      div.className = 'msg ' + className;
+      div.innerText = (className === 'user-msg' ? '🗣️ ' : '🤖 ') + text;
+      const conv = document.getElementById('conversation');
+      conv.appendChild(div);
+      conv.scrollTop = conv.scrollHeight;
     }
   </script>
 
