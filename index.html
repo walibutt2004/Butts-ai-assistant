@@ -4,23 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Butt's AI Assistance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      min-height: 100vh;
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
       background: #000008;
       font-family: 'Rajdhani', sans-serif;
       color: white;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    /* ── CANVAS BACKGROUND ── */
     #bgCanvas {
       position: fixed;
       top: 0; left: 0;
@@ -28,31 +23,26 @@
       z-index: 0;
     }
 
-    /* ── SCANLINES ── */
     .scanlines {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.08) 2px,
-        rgba(0, 0, 0, 0.08) 4px
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px
       );
       z-index: 1;
       pointer-events: none;
-      animation: scanMove 8s linear infinite;
+      animation: scanMove 10s linear infinite;
     }
     @keyframes scanMove {
       0% { background-position: 0 0; }
       100% { background-position: 0 100px; }
     }
 
-    /* ── CORNER DECORATIONS ── */
     .corner {
       position: fixed;
-      width: 60px; height: 60px;
+      width: 50px; height: 50px;
       z-index: 2;
       pointer-events: none;
     }
@@ -63,78 +53,74 @@
       box-shadow: 0 0 10px #7c3aed, 0 0 20px #7c3aed;
     }
     .corner::before { width: 100%; height: 2px; top: 0; left: 0; }
-    .corner::after { width: 2px; height: 100%; top: 0; left: 0; }
-    .corner-tl { top: 12px; left: 12px; }
-    .corner-tr { top: 12px; right: 12px; transform: scaleX(-1); }
-    .corner-bl { bottom: 12px; left: 12px; transform: scaleY(-1); }
-    .corner-br { bottom: 12px; right: 12px; transform: scale(-1); }
+    .corner::after  { width: 2px; height: 100%; top: 0; left: 0; }
+    .corner-tl { top: 10px; left: 10px; }
+    .corner-tr { top: 10px; right: 10px; transform: scaleX(-1); }
+    .corner-bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
+    .corner-br { bottom: 10px; right: 10px; transform: scale(-1); }
 
-    /* ── MAIN CONTAINER ── */
-    .container {
+    /* ── MAIN LAYOUT ── */
+    .app {
       position: relative;
       z-index: 3;
-      width: 92%;
-      max-width: 520px;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      height: 96vh;
-      justify-content: center;
     }
 
-    /* ── CYBERPUNK CARD ── */
-    .cyber-card {
-      background: rgba(5, 0, 30, 0.85);
-      border: 1px solid rgba(124, 58, 237, 0.4);
-      border-radius: 4px;
+    /* ── HEADER ── */
+    .header {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(124,58,237,0.25);
+      background: rgba(5,0,30,0.9);
+      backdrop-filter: blur(20px);
+      flex-shrink: 0;
       position: relative;
       overflow: hidden;
     }
-    .cyber-card::before {
+    .header::after {
       content: '';
       position: absolute;
-      top: 0; left: -100%;
+      bottom: 0; left: -100%;
       width: 100%; height: 1px;
       background: linear-gradient(90deg, transparent, #7c3aed, #3b82f6, transparent);
-      animation: scanLine 3s linear infinite;
+      animation: scanLine 4s linear infinite;
     }
     @keyframes scanLine {
       0% { left: -100%; }
       100% { left: 100%; }
     }
 
-    /* ── HEADER ── */
-    .header {
-      padding: 20px 24px 16px;
-      border-bottom: 1px solid rgba(124, 58, 237, 0.25);
-      position: relative;
-    }
-    .header-top {
+    .header-inner {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 6px;
+      gap: 14px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
     }
+
     .ai-avatar {
-      width: 42px; height: 42px;
+      width: 46px; height: 46px;
       border-radius: 50%;
       border: 2px solid #7c3aed;
       background: radial-gradient(circle, rgba(124,58,237,0.4), rgba(59,130,246,0.2));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
-      box-shadow: 0 0 15px rgba(124,58,237,0.6), 0 0 30px rgba(124,58,237,0.2);
-      animation: avatarPulse 2s ease-in-out infinite;
+      font-size: 1.3rem;
       flex-shrink: 0;
+      animation: avatarPulse 2.5s ease-in-out infinite;
     }
     @keyframes avatarPulse {
-      0%, 100% { box-shadow: 0 0 15px rgba(124,58,237,0.6), 0 0 30px rgba(124,58,237,0.2); }
-      50% { box-shadow: 0 0 25px rgba(124,58,237,0.9), 0 0 50px rgba(124,58,237,0.4), 0 0 70px rgba(59,130,246,0.2); }
+      0%,100% { box-shadow: 0 0 15px rgba(124,58,237,0.6), 0 0 30px rgba(124,58,237,0.2); }
+      50%      { box-shadow: 0 0 30px rgba(124,58,237,1),   0 0 60px rgba(59,130,246,0.3); }
     }
+
     .header-text h1 {
       font-family: 'Orbitron', monospace;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 900;
       background: linear-gradient(90deg, #a78bfa, #60a5fa, #a78bfa);
       background-size: 200% auto;
@@ -142,29 +128,35 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: textShine 3s linear infinite;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
     }
     @keyframes textShine {
-      0% { background-position: 0% center; }
+      0%   { background-position: 0% center; }
       100% { background-position: 200% center; }
     }
     .header-text p {
-      font-size: 0.7rem;
-      color: rgba(124,58,237,0.7);
+      font-size: 0.68rem;
+      color: rgba(124,58,237,0.65);
       letter-spacing: 2px;
       text-transform: uppercase;
       margin-top: 2px;
     }
 
-    /* Online indicator */
-    .online-badge {
+    .header-right {
       margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .online-badge {
       display: flex;
       align-items: center;
       gap: 5px;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: #34d399;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      font-family: 'Orbitron', monospace;
     }
     .online-dot {
       width: 6px; height: 6px;
@@ -174,35 +166,30 @@
       animation: blink 1.5s ease-in-out infinite;
     }
     @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.2; }
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.2; }
     }
-
-    /* Stats bar */
     .stats-bar {
       display: flex;
-      gap: 16px;
-      margin-top: 8px;
+      gap: 14px;
     }
     .stat {
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       color: rgba(255,255,255,0.3);
       letter-spacing: 1px;
       text-transform: uppercase;
     }
-    .stat span {
-      color: #7c3aed;
-      font-weight: 600;
-    }
+    .stat span { color: #7c3aed; font-weight: 600; }
 
     /* ── CHAT AREA ── */
     #conversation {
-      padding: 14px;
-      height: 280px;
+      flex: 1;
       overflow-y: auto;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+      background: rgba(3,0,20,0.7);
       scrollbar-width: thin;
       scrollbar-color: rgba(124,58,237,0.3) transparent;
     }
@@ -213,57 +200,45 @@
     }
 
     .msg {
-      padding: 10px 14px;
-      font-size: 0.88rem;
-      line-height: 1.55;
-      max-width: 82%;
-      position: relative;
+      padding: 11px 16px;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      max-width: 70%;
       animation: msgIn 0.3s ease;
       font-family: 'Rajdhani', sans-serif;
-      font-weight: 400;
       letter-spacing: 0.3px;
     }
     @keyframes msgIn {
-      from { opacity: 0; transform: translateX(-10px); }
-      to { opacity: 1; transform: translateX(0); }
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-
     .user-msg {
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 2px 14px 14px 14px;
-      align-self: flex-end;
-      color: rgba(255,255,255,0.9);
-      animation-name: msgInRight;
-      box-shadow: 0 0 15px rgba(59,130,246,0.1), inset 0 0 15px rgba(59,130,246,0.05);
-    }
-    @keyframes msgInRight {
-      from { opacity: 0; transform: translateX(10px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    .ai-msg {
-      background: rgba(124, 58, 237, 0.08);
-      border: 1px solid rgba(124, 58, 237, 0.3);
+      background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.3);
       border-radius: 14px 2px 14px 14px;
+      align-self: flex-end;
+      box-shadow: 0 0 20px rgba(59,130,246,0.08);
+    }
+    .ai-msg {
+      background: rgba(124,58,237,0.08);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 2px 14px 14px 14px;
       align-self: flex-start;
-      color: rgba(255,255,255,0.9);
-      box-shadow: 0 0 15px rgba(124,58,237,0.1), inset 0 0 15px rgba(124,58,237,0.05);
+      box-shadow: 0 0 20px rgba(124,58,237,0.08);
     }
 
-    /* Typing indicator */
     .typing {
       display: flex;
       gap: 5px;
       padding: 12px 16px;
       background: rgba(124,58,237,0.08);
       border: 1px solid rgba(124,58,237,0.3);
-      border-radius: 14px 2px 14px 14px;
+      border-radius: 2px 14px 14px 14px;
       align-self: flex-start;
       width: fit-content;
     }
     .typing span {
-      width: 6px; height: 6px;
+      width: 7px; height: 7px;
       background: #7c3aed;
       border-radius: 50%;
       box-shadow: 0 0 6px #7c3aed;
@@ -272,35 +247,42 @@
     .typing span:nth-child(2) { animation-delay: 0.2s; }
     .typing span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typingDot {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
-      30% { transform: translateY(-6px); opacity: 1; }
+      0%,60%,100% { transform: translateY(0); opacity: 0.3; }
+      30%          { transform: translateY(-7px); opacity: 1; }
     }
 
     /* ── CONTROLS ── */
     .controls {
-      padding: 14px 16px;
+      flex-shrink: 0;
+      padding: 14px 20px;
+      background: rgba(5,0,30,0.92);
       border-top: 1px solid rgba(124,58,237,0.2);
+      backdrop-filter: blur(20px);
+    }
+    .controls-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     #status {
       text-align: center;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: rgba(124,58,237,0.7);
-      margin-bottom: 12px;
-      min-height: 16px;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       font-family: 'Orbitron', monospace;
+      min-height: 16px;
     }
 
-    /* Wave */
     .wave {
       display: none;
       justify-content: center;
       align-items: center;
-      gap: 3px;
-      height: 22px;
-      margin-bottom: 10px;
+      gap: 4px;
+      height: 24px;
     }
     .wave.active { display: flex; }
     .wave-bar {
@@ -308,42 +290,41 @@
       border-radius: 2px;
       animation: waveAnim 0.8s ease-in-out infinite;
     }
-    .wave-bar:nth-child(1) { height: 6px; background: #7c3aed; box-shadow: 0 0 6px #7c3aed; animation-delay: 0s; }
+    .wave-bar:nth-child(1) { height: 6px;  background: #7c3aed; box-shadow: 0 0 6px #7c3aed; animation-delay: 0s; }
     .wave-bar:nth-child(2) { height: 14px; background: #8b5cf6; box-shadow: 0 0 6px #8b5cf6; animation-delay: 0.1s; }
     .wave-bar:nth-child(3) { height: 22px; background: #60a5fa; box-shadow: 0 0 8px #60a5fa; animation-delay: 0.2s; }
     .wave-bar:nth-child(4) { height: 14px; background: #8b5cf6; box-shadow: 0 0 6px #8b5cf6; animation-delay: 0.3s; }
-    .wave-bar:nth-child(5) { height: 6px; background: #7c3aed; box-shadow: 0 0 6px #7c3aed; animation-delay: 0.4s; }
+    .wave-bar:nth-child(5) { height: 6px;  background: #7c3aed; box-shadow: 0 0 6px #7c3aed; animation-delay: 0.4s; }
     @keyframes waveAnim {
-      0%, 100% { transform: scaleY(0.3); }
-      50% { transform: scaleY(1); }
+      0%,100% { transform: scaleY(0.3); }
+      50%      { transform: scaleY(1); }
     }
 
-    /* Voice button */
-    .voice-row {
+    .input-row {
       display: flex;
-      justify-content: center;
-      margin-bottom: 12px;
+      align-items: center;
+      gap: 12px;
     }
+
     #voiceBtn {
-      width: 68px; height: 68px;
+      width: 52px; height: 52px;
       border-radius: 50%;
       border: 2px solid rgba(124,58,237,0.6);
       background: rgba(124,58,237,0.1);
       color: white;
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 20px rgba(124,58,237,0.3), inset 0 0 20px rgba(124,58,237,0.05);
+      flex-shrink: 0;
+      transition: all 0.3s;
       animation: btnIdle 3s ease-in-out infinite;
     }
     @keyframes btnIdle {
-      0%, 100% { box-shadow: 0 0 20px rgba(124,58,237,0.3), inset 0 0 20px rgba(124,58,237,0.05); }
-      50% { box-shadow: 0 0 35px rgba(124,58,237,0.5), 0 0 60px rgba(59,130,246,0.15), inset 0 0 20px rgba(124,58,237,0.1); }
+      0%,100% { box-shadow: 0 0 15px rgba(124,58,237,0.3); }
+      50%      { box-shadow: 0 0 30px rgba(124,58,237,0.6), 0 0 50px rgba(59,130,246,0.2); }
     }
     #voiceBtn:hover {
       transform: scale(1.1);
-      background: rgba(124,58,237,0.2);
-      box-shadow: 0 0 40px rgba(124,58,237,0.7), 0 0 80px rgba(59,130,246,0.3);
+      background: rgba(124,58,237,0.25);
     }
     #voiceBtn.listening {
       border-color: rgba(239,68,68,0.8);
@@ -351,73 +332,49 @@
       animation: pulseRed 1s ease-out infinite;
     }
     @keyframes pulseRed {
-      0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.6), 0 0 20px rgba(239,68,68,0.3); }
-      70% { box-shadow: 0 0 0 20px rgba(239,68,68,0), 0 0 20px rgba(239,68,68,0.3); }
-      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0), 0 0 20px rgba(239,68,68,0.3); }
+      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+      70%  { box-shadow: 0 0 0 18px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
     }
     #voiceBtn.thinking {
       border-color: rgba(96,165,250,0.8);
       background: rgba(96,165,250,0.12);
-      animation: spinGlow 1.5s linear infinite;
+      animation: spinGlow 1.2s linear infinite;
     }
     @keyframes spinGlow {
-      0% { box-shadow: 0 0 20px rgba(96,165,250,0.4), 0 0 0 0 rgba(96,165,250,0.2); transform: rotate(0deg); }
-      100% { box-shadow: 0 0 20px rgba(96,165,250,0.4), 0 0 0 0 rgba(96,165,250,0.2); transform: rotate(360deg); }
+      0%   { box-shadow: 0 0 20px rgba(96,165,250,0.5); transform: rotate(0deg); }
+      100% { box-shadow: 0 0 20px rgba(96,165,250,0.5); transform: rotate(360deg); }
     }
 
-    /* Divider */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .divider-line {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(124,58,237,0.3), transparent);
-    }
-    .divider-text {
-      font-size: 0.65rem;
-      color: rgba(124,58,237,0.5);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      font-family: 'Orbitron', monospace;
-    }
-
-    /* Text input */
-    .text-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
     #textInput {
       flex: 1;
-      padding: 10px 16px;
+      padding: 12px 20px;
       background: rgba(124,58,237,0.05);
       border: 1px solid rgba(124,58,237,0.3);
       border-radius: 2px;
       color: white;
-      font-size: 0.88rem;
+      font-size: 0.92rem;
       outline: none;
       font-family: 'Rajdhani', sans-serif;
       letter-spacing: 0.5px;
       transition: all 0.3s;
     }
-    #textInput::placeholder { color: rgba(124,58,237,0.4); }
+    #textInput::placeholder { color: rgba(124,58,237,0.35); }
     #textInput:focus {
       border-color: rgba(124,58,237,0.8);
       background: rgba(124,58,237,0.08);
-      box-shadow: 0 0 20px rgba(124,58,237,0.2);
+      box-shadow: 0 0 20px rgba(124,58,237,0.15);
     }
+
     #sendBtn {
-      width: 40px; height: 40px;
+      width: 46px; height: 46px;
       border-radius: 2px;
       border: 1px solid rgba(124,58,237,0.5);
       background: rgba(124,58,237,0.15);
       color: #a78bfa;
-      font-size: 1rem;
+      font-size: 1.1rem;
       cursor: pointer;
+      flex-shrink: 0;
       transition: all 0.2s;
       display: flex;
       align-items: center;
@@ -425,55 +382,78 @@
     }
     #sendBtn:hover {
       background: rgba(124,58,237,0.35);
-      box-shadow: 0 0 20px rgba(124,58,237,0.5);
+      box-shadow: 0 0 20px rgba(124,58,237,0.4);
       color: white;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .header { padding: 12px 14px; }
+      .header-text h1 { font-size: 0.8rem; letter-spacing: 1px; }
+      .header-text p { display: none; }
+      .ai-avatar { width: 36px; height: 36px; font-size: 1rem; }
+      .stats-bar { display: none; }
+      .online-badge { font-size: 0.6rem; }
+      #conversation { padding: 12px; gap: 8px; }
+      .msg { max-width: 88%; font-size: 0.85rem; }
+      .controls { padding: 10px 12px; }
+      #voiceBtn { width: 44px; height: 44px; font-size: 1.2rem; }
+      #textInput { padding: 10px 14px; font-size: 0.85rem; }
+      #sendBtn { width: 40px; height: 40px; }
+      #status { font-size: 0.6rem; letter-spacing: 1px; }
+    }
+
+    @media (min-width: 1200px) {
+      .header { padding: 18px 40px; }
+      .header-text h1 { font-size: 1.3rem; }
+      #conversation { padding: 24px 60px; }
+      .msg { max-width: 55%; font-size: 1rem; }
+      .controls { padding: 16px 60px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Animated background -->
   <canvas id="bgCanvas"></canvas>
   <div class="scanlines"></div>
-
-  <!-- Corner decorations -->
   <div class="corner corner-tl"></div>
   <div class="corner corner-tr"></div>
   <div class="corner corner-bl"></div>
   <div class="corner corner-br"></div>
 
-  <div class="container">
-    <div class="cyber-card">
+  <div class="app">
 
-      <!-- Header -->
-      <div class="header">
-        <div class="header-top">
-          <div class="ai-avatar">🤖</div>
-          <div class="header-text">
-            <h1>BUTT'S AI ASSISTANCE</h1>
-            <p>Neural Network v3.3 • Active</p>
-          </div>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-inner">
+        <div class="ai-avatar">🤖</div>
+        <div class="header-text">
+          <h1>BUTT'S AI ASSISTANCE</h1>
+          <p>Neural Network v3.3 • Active</p>
+        </div>
+        <div class="header-right">
           <div class="online-badge">
             <div class="online-dot"></div>
             ONLINE
           </div>
-        </div>
-        <div class="stats-bar">
-          <div class="stat">MODEL: <span>LLaMA 3.3</span></div>
-          <div class="stat">LANG: <span>UR / EN</span></div>
-          <div class="stat">MODE: <span>VOICE + TEXT</span></div>
+          <div class="stats-bar">
+            <div class="stat">MODEL: <span>LLaMA 3.3</span></div>
+            <div class="stat">LANG: <span>UR / EN</span></div>
+            <div class="stat">MODE: <span>VOICE + TEXT</span></div>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- Chat -->
-      <div id="conversation">
-        <div class="msg ai-msg">⚡ SYSTEM ONLINE — Assalam o Alaikum! Main Butt's AI Assistance hoon. Voice ya text — dono se baat kar sakte hain!</div>
-      </div>
+    <!-- CHAT -->
+    <div id="conversation">
+      <div class="msg ai-msg">⚡ SYSTEM ONLINE — Assalam o Alaikum! Main Butt's AI Assistance hoon. Voice ya text — dono se baat kar sakte hain!</div>
+    </div>
 
-      <!-- Controls -->
-      <div class="controls">
+    <!-- CONTROLS -->
+    <div class="controls">
+      <div class="controls-inner">
         <div id="status">STANDBY — MIC YA TEXT ACTIVATE KARO</div>
-
         <div class="wave" id="wave">
           <div class="wave-bar"></div>
           <div class="wave-bar"></div>
@@ -481,119 +461,97 @@
           <div class="wave-bar"></div>
           <div class="wave-bar"></div>
         </div>
-
-        <div class="voice-row">
-          <button id="voiceBtn" onclick="toggleVoice()" title="Voice activate">🎤</button>
-        </div>
-
-        <div class="divider">
-          <div class="divider-line"></div>
-          <div class="divider-text">or type</div>
-          <div class="divider-line"></div>
-        </div>
-
-        <div class="text-row">
+        <div class="input-row">
+          <button id="voiceBtn" onclick="toggleVoice()">🎤</button>
           <input type="text" id="textInput" placeholder="Query input karein..." onkeydown="if(event.key==='Enter') sendText()" />
           <button id="sendBtn" onclick="sendText()">➤</button>
         </div>
       </div>
-
     </div>
+
   </div>
 
   <script>
-    // ── ANIMATED BACKGROUND ──────────────────────────────
+    // ── BACKGROUND CANVAS ─────────────────────────────────
     const canvas = document.getElementById('bgCanvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    window.addEventListener('resize', () => {
+
+    function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-    });
+    }
+    resize();
+    window.addEventListener('resize', resize);
 
-    // Particles
     const particles = Array.from({length: 80}, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.4,
       vy: (Math.random() - 0.5) * 0.4,
       size: Math.random() * 2 + 0.5,
-      opacity: Math.random() * 0.6 + 0.1,
+      opacity: Math.random() * 0.5 + 0.1,
       color: Math.random() > 0.5 ? '124,58,237' : '59,130,246'
     }));
 
-    // Grid lines
-    function drawGrid() {
-      ctx.strokeStyle = 'rgba(124,58,237,0.04)';
-      ctx.lineWidth = 1;
-      const spacing = 50;
-      for (let x = 0; x < canvas.width; x += spacing) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += spacing) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-      }
-    }
-
-    // Floating lines
-    const floatLines = Array.from({length: 6}, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      length: Math.random() * 150 + 50,
-      speed: Math.random() * 1 + 0.3,
-      opacity: Math.random() * 0.3 + 0.05,
+    const floatLines = Array.from({length: 8}, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      length: Math.random() * 180 + 60,
+      speed: Math.random() * 0.8 + 0.2,
+      opacity: Math.random() * 0.25 + 0.04,
       horizontal: Math.random() > 0.5
     }));
+
+    function drawGrid() {
+      ctx.strokeStyle = 'rgba(124,58,237,0.035)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 55) {
+        ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 55) {
+        ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      }
+    }
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawGrid();
 
-      // Draw floating lines
-      floatLines.forEach(line => {
+      floatLines.forEach(l => {
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(124,58,237,${line.opacity})`;
+        ctx.strokeStyle = `rgba(124,58,237,${l.opacity})`;
         ctx.lineWidth = 1;
-        if (line.horizontal) {
-          ctx.moveTo(line.x, line.y);
-          ctx.lineTo(line.x + line.length, line.y);
-          line.x += line.speed;
-          if (line.x > canvas.width + line.length) line.x = -line.length;
+        if (l.horizontal) {
+          ctx.moveTo(l.x, l.y); ctx.lineTo(l.x + l.length, l.y);
+          l.x += l.speed;
+          if (l.x > canvas.width + l.length) l.x = -l.length;
         } else {
-          ctx.moveTo(line.x, line.y);
-          ctx.lineTo(line.x, line.y + line.length);
-          line.y += line.speed;
-          if (line.y > canvas.height + line.length) line.y = -line.length;
+          ctx.moveTo(l.x, l.y); ctx.lineTo(l.x, l.y + l.length);
+          l.y += l.speed;
+          if (l.y > canvas.height + l.length) l.y = -l.length;
         }
         ctx.stroke();
       });
 
-      // Draw particles
       particles.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${p.color},${p.opacity})`;
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = `rgba(${p.color},0.8)`;
-        ctx.fill();
-        ctx.shadowBlur = 0;
+        ctx.shadowBlur = 8; ctx.shadowColor = `rgba(${p.color},0.8)`;
+        ctx.fill(); ctx.shadowBlur = 0;
         p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
       });
 
-      // Connect nearby particles
       particles.forEach((p, i) => {
-        particles.slice(i + 1).forEach(p2 => {
-          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (dist < 100) {
+        particles.slice(i+1).forEach(p2 => {
+          const d = Math.hypot(p.x-p2.x, p.y-p2.y);
+          if (d < 110) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(124,58,237,${0.15 * (1 - dist/100)})`;
+            ctx.strokeStyle = `rgba(124,58,237,${0.12*(1-d/110)})`;
             ctx.lineWidth = 0.5;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
+            ctx.moveTo(p.x,p.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
           }
         });
       });
@@ -602,7 +560,7 @@
     }
     animate();
 
-    // ── VOICE ────────────────────────────────────────────
+    // ── VOICE ─────────────────────────────────────────────
     let recognition, isListening = false;
 
     function toggleVoice() {
@@ -632,7 +590,7 @@
         await getResponse(text, true);
       };
       recognition.onerror = () => { stopVoice(); setStatus('ERROR — RETRY'); };
-      recognition.onend = () => { if (isListening) stopVoice(); };
+      recognition.onend   = () => { if (isListening) stopVoice(); };
     }
 
     function stopVoice() {
@@ -643,7 +601,7 @@
       document.getElementById('wave').classList.remove('active');
     }
 
-    // ── TEXT ─────────────────────────────────────────────
+    // ── TEXT ──────────────────────────────────────────────
     function sendText() {
       const input = document.getElementById('textInput');
       const text = input.value.trim();
@@ -653,7 +611,7 @@
       getResponse(text, false);
     }
 
-    // ── AI RESPONSE ──────────────────────────────────────
+    // ── AI RESPONSE ───────────────────────────────────────
     async function getResponse(text, speakOut) {
       document.getElementById('voiceBtn').classList.add('thinking');
       document.getElementById('voiceBtn').textContent = '⚡';
@@ -666,7 +624,7 @@
       scrollDown();
 
       try {
-        const res = await fetch('/ai-response', {
+        const res  = await fetch('/ai-response', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userText: text })
@@ -686,17 +644,19 @@
       }
     }
 
-    // ── SPEAK ────────────────────────────────────────────
+    // ── SPEAK ─────────────────────────────────────────────
     function speakText(text) {
       window.speechSynthesis.cancel();
       const utt = new SpeechSynthesisUtterance(text);
-      utt.lang = /[\u0600-\u06FF]/.test(text) ? 'ur-PK' : 'en-US';
-      utt.rate = 0.88; utt.pitch = 1; utt.volume = 1;
-      utt.onend = () => setStatus('STANDBY — MIC YA TEXT ACTIVATE KARO');
+      utt.lang    = /[\u0600-\u06FF]/.test(text) ? 'ur-PK' : 'en-US';
+      utt.rate    = 0.88;
+      utt.pitch   = 1;
+      utt.volume  = 1;
+      utt.onend   = () => setStatus('STANDBY — MIC YA TEXT ACTIVATE KARO');
       setTimeout(() => window.speechSynthesis.speak(utt), 200);
     }
 
-    // ── HELPERS ──────────────────────────────────────────
+    // ── HELPERS ───────────────────────────────────────────
     function addMsg(text, cls) {
       const div = document.createElement('div');
       div.className = 'msg ' + cls;
