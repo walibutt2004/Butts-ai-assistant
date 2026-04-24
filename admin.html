@@ -8,15 +8,16 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #080800; font-family: 'Rajdhani', sans-serif; color: white; min-height: 100vh; }
+    @keyframes goldShine { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
     .login-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; }
     .logo { font-family: 'Orbitron', monospace; font-size: 2rem; font-weight: 900; background: linear-gradient(90deg, #f5c842, #fff7c0, #f5c842); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: goldShine 3s linear infinite; letter-spacing: 6px; }
     .subtitle { font-size: 0.8rem; color: rgba(245,200,66,0.5); letter-spacing: 3px; font-family: 'Orbitron', monospace; }
-    @keyframes goldShine { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
     .google-btn { display: flex; align-items: center; gap: 12px; padding: 14px 28px; border-radius: 50px; border: 1px solid rgba(245,200,66,0.4); background: rgba(245,200,66,0.08); color: rgba(245,200,66,0.95); font-size: 0.9rem; cursor: pointer; font-family: 'Orbitron', monospace; letter-spacing: 1px; transition: all 0.3s; }
     .google-btn:hover { background: rgba(245,200,66,0.15); }
     .error-msg { color: rgba(255,80,80,0.9); font-size: 0.85rem; text-align: center; display: none; }
 
-    .admin-panel { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+    .admin-panel { display: none; padding: 20px; max-width: 960px; margin: 0 auto; }
     .admin-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(245,200,66,0.2); margin-bottom: 24px; }
     .admin-title { font-family: 'Orbitron', monospace; font-size: 1rem; color: rgba(245,200,66,0.9); letter-spacing: 3px; }
     .logout-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(255,80,80,0.3); background: rgba(255,80,80,0.07); color: rgba(255,120,120,0.8); font-family: 'Orbitron', monospace; font-size: 0.7rem; cursor: pointer; }
@@ -26,35 +27,57 @@
     .stat-num { font-family: 'Orbitron', monospace; font-size: 1.8rem; color: rgba(245,200,66,0.9); }
     .stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 4px; letter-spacing: 1px; }
 
-    .filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-    .search-input { flex: 1; min-width: 200px; padding: 10px 16px; background: rgba(245,200,66,0.05); border: 1px solid rgba(245,200,66,0.2); border-radius: 8px; color: white; font-size: 0.88rem; outline: none; font-family: 'Rajdhani', sans-serif; }
-    .search-input::placeholder { color: rgba(245,200,66,0.3); }
-    .filter-btn { padding: 10px 16px; border-radius: 8px; border: 1px solid rgba(245,200,66,0.2); background: transparent; color: rgba(245,200,66,0.6); font-size: 0.78rem; cursor: pointer; font-family: 'Orbitron', monospace; transition: all 0.2s; }
-    .filter-btn.active { background: rgba(245,200,66,0.15); color: rgba(245,200,66,0.9); border-color: rgba(245,200,66,0.5); }
+    /* BREADCRUMB */
+    .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 0.8rem; color: rgba(245,200,66,0.5); font-family: 'Orbitron', monospace; flex-wrap: wrap; }
+    .breadcrumb span { cursor: pointer; transition: color 0.2s; }
+    .breadcrumb span:hover { color: rgba(245,200,66,0.9); }
+    .breadcrumb .sep { color: rgba(245,200,66,0.2); }
+    .breadcrumb .current { color: rgba(245,200,66,0.9); cursor: default; }
 
+    /* VIEWS */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* EMAILS LIST */
+    .emails-list { display: flex; flex-direction: column; gap: 10px; }
+    .email-card { background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.12); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; }
+    .email-card:hover { background: rgba(245,200,66,0.09); border-color: rgba(245,200,66,0.3); transform: translateX(4px); }
+    .email-left { display: flex; flex-direction: column; gap: 4px; }
+    .email-addr { font-size: 0.9rem; color: rgba(245,200,66,0.9); }
+    .email-meta { font-size: 0.72rem; color: rgba(255,255,255,0.35); }
+    .email-count { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: rgba(245,200,66,0.6); background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2); border-radius: 20px; padding: 4px 12px; }
+
+    /* DAYS LIST */
+    .days-list { display: flex; flex-direction: column; gap: 10px; }
+    .day-card { background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.12); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; }
+    .day-card:hover { background: rgba(245,200,66,0.09); border-color: rgba(245,200,66,0.3); transform: translateX(4px); }
+    .day-date { font-family: 'Orbitron', monospace; font-size: 0.85rem; color: rgba(245,200,66,0.9); }
+    .day-count { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: rgba(245,200,66,0.6); background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2); border-radius: 20px; padding: 4px 12px; }
+
+    /* CHATS LIST */
     .chats-list { display: flex; flex-direction: column; gap: 12px; }
-    .chat-card { background: rgba(245,200,66,0.03); border: 1px solid rgba(245,200,66,0.1); border-radius: 12px; padding: 16px; cursor: pointer; transition: all 0.2s; }
-    .chat-card:hover { background: rgba(245,200,66,0.07); border-color: rgba(245,200,66,0.25); }
-    .chat-email { font-size: 0.75rem; color: rgba(245,200,66,0.7); font-family: 'Orbitron', monospace; margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .chat-time { color: rgba(255,255,255,0.3); font-size: 0.65rem; }
-    .chat-user-text { font-size: 0.88rem; color: rgba(255,255,255,0.8); margin-bottom: 6px; }
-    .chat-ai-text { font-size: 0.82rem; color: rgba(245,200,66,0.5); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .chat-card { background: rgba(245,200,66,0.03); border: 1px solid rgba(245,200,66,0.1); border-radius: 12px; padding: 16px; }
+    .chat-time { font-size: 0.65rem; color: rgba(245,200,66,0.4); font-family: 'Orbitron', monospace; margin-bottom: 10px; }
+    .chat-user-text { font-size: 0.88rem; color: rgba(255,255,255,0.85); margin-bottom: 8px; padding: 8px 12px; background: rgba(245,200,66,0.06); border-radius: 8px; }
+    .chat-ai-text { font-size: 0.85rem; color: rgba(245,200,66,0.6); line-height: 1.6; padding: 8px 12px; background: rgba(100,80,0,0.1); border-radius: 8px; }
+    .chat-label { font-size: 0.65rem; color: rgba(255,255,255,0.3); margin-bottom: 3px; letter-spacing: 1px; }
 
     .loading { text-align: center; padding: 40px; color: rgba(245,200,66,0.4); font-family: 'Orbitron', monospace; font-size: 0.75rem; letter-spacing: 2px; }
     .no-data { text-align: center; padding: 40px; color: rgba(255,255,255,0.2); }
+    .back-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(245,200,66,0.2); background: transparent; color: rgba(245,200,66,0.6); font-family: 'Orbitron', monospace; font-size: 0.7rem; cursor: pointer; margin-bottom: 16px; transition: all 0.2s; }
+    .back-btn:hover { background: rgba(245,200,66,0.1); color: rgba(245,200,66,0.9); }
+    .section-title { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: rgba(245,200,66,0.5); letter-spacing: 2px; margin-bottom: 14px; }
   </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div class="logo">NEXA</div>
   <div class="subtitle">ADMIN PANEL</div>
   <button class="google-btn" onclick="adminLogin()">🔑 Login with Google</button>
-  <div class="error-msg" id="errorMsg">⛔ Access Denied — You are not authorized!</div>
+  <div class="error-msg" id="errorMsg">⛔ Access Denied!</div>
 </div>
 
-<!-- ADMIN PANEL -->
 <div class="admin-panel" id="adminPanel">
   <div class="admin-header">
     <div class="admin-title">⚡ NEXA ADMIN</div>
@@ -62,38 +85,40 @@
   </div>
 
   <div class="stats">
-    <div class="stat-card">
-      <div class="stat-num" id="totalChats">0</div>
-      <div class="stat-label">TOTAL CHATS</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" id="totalUsers">0</div>
-      <div class="stat-label">UNIQUE USERS</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" id="todayChats">0</div>
-      <div class="stat-label">TODAY'S CHATS</div>
-    </div>
+    <div class="stat-card"><div class="stat-num" id="totalChats">0</div><div class="stat-label">TOTAL CHATS</div></div>
+    <div class="stat-card"><div class="stat-num" id="totalUsers">0</div><div class="stat-label">UNIQUE USERS</div></div>
+    <div class="stat-card"><div class="stat-num" id="todayChats">0</div><div class="stat-label">TODAY'S CHATS</div></div>
   </div>
 
-  <div class="filters">
-    <input type="text" class="search-input" id="searchInput" placeholder="Search by email or message..." oninput="filterChats()">
-    <button class="filter-btn active" id="btnAll" onclick="setFilter('all')">ALL</button>
-    <button class="filter-btn" id="btnToday" onclick="setFilter('today')">TODAY</button>
+  <div class="breadcrumb" id="breadcrumb">
+    <span class="current">All Users</span>
   </div>
 
-  <div class="chats-list" id="chatsList">
-    <div class="loading">LOADING...</div>
+  <!-- View 1: All Emails -->
+  <div class="view active" id="viewEmails">
+    <div class="section-title">👥 ALL USERS</div>
+    <div class="emails-list" id="emailsList"><div class="loading">LOADING...</div></div>
+  </div>
+
+  <!-- View 2: Days of a user -->
+  <div class="view" id="viewDays">
+    <div class="section-title" id="daysTitle">📅 CHAT DAYS</div>
+    <div class="days-list" id="daysList"></div>
+  </div>
+
+  <!-- View 3: Chats of a day -->
+  <div class="view" id="viewChats">
+    <div class="section-title" id="chatsTitle">💬 CHATS</div>
+    <div class="chats-list" id="chatsList"></div>
   </div>
 </div>
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-  import { getFirestore, collection, getDocs, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+  import { getFirestore, collection, getDocs, query } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 
   const ADMIN_EMAIL = 'ironmanwaliabdullah@gmail.com';
-
   const firebaseConfig = {
     apiKey: "AIzaSyCLosHSZulEZW1ustqAXk8XfpLNWkjKyhw",
     authDomain: "butts-ai-assistant.firebaseapp.com",
@@ -107,106 +132,132 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
-
   let allChats = [];
-  let currentFilter = 'all';
+  let selectedEmail = '';
 
   onAuthStateChanged(auth, (user) => {
     if (user && user.email === ADMIN_EMAIL) {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('adminPanel').style.display = 'block';
       loadAllChats();
-    } else if (user && user.email !== ADMIN_EMAIL) {
+    } else if (user) {
       document.getElementById('errorMsg').style.display = 'block';
       signOut(auth);
     }
   });
 
-  window.adminLogin = async () => {
-    try { await signInWithPopup(auth, provider); }
-    catch(e) { console.error(e); }
-  };
-
-  window.adminLogout = async () => {
-    await signOut(auth);
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('adminPanel').style.display = 'none';
-  };
+  window.adminLogin = async () => { try { await signInWithPopup(auth, provider); } catch(e) { console.error(e); } };
+  window.adminLogout = async () => { await signOut(auth); location.reload(); };
 
   async function loadAllChats() {
     try {
-      const q = query(collection(db, 'chats'));
-      const snap = await getDocs(q);
+      const snap = await getDocs(query(collection(db, 'chats')));
       allChats = [];
-      snap.forEach(doc => {
-        allChats.push({ id: doc.id, ...doc.data() });
-      });
-      allChats.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+      snap.forEach(doc => allChats.push({ id: doc.id, ...doc.data() }));
+      allChats.sort((a,b) => (b.timestamp?.seconds||0) - (a.timestamp?.seconds||0));
       updateStats();
-      renderChats();
+      renderEmails();
     } catch(e) {
-      document.getElementById('chatsList').innerHTML = '<div class="no-data">Error loading chats</div>';
+      document.getElementById('emailsList').innerHTML = '<div class="no-data">Error loading: ' + e.message + '</div>';
     }
   }
 
   function updateStats() {
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const todayChats = allChats.filter(c => {
-      const d = c.timestamp?.toDate?.();
-      return d && d >= today;
-    });
-    const uniqueUsers = new Set(allChats.map(c => c.userId)).size;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const todayCount = allChats.filter(c => { const d = c.timestamp?.toDate?.(); return d && d >= today; }).length;
+    const uniqueUsers = new Set(allChats.map(c => c.userEmail)).size;
     document.getElementById('totalChats').textContent = allChats.length;
     document.getElementById('totalUsers').textContent = uniqueUsers;
-    document.getElementById('todayChats').textContent = todayChats.length;
+    document.getElementById('todayChats').textContent = todayCount;
   }
 
-  window.setFilter = (filter) => {
-    currentFilter = filter;
-    document.getElementById('btnAll').classList.toggle('active', filter === 'all');
-    document.getElementById('btnToday').classList.toggle('active', filter === 'today');
-    renderChats();
-  };
-
-  window.filterChats = () => renderChats();
-
-  function renderChats() {
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    const today = new Date(); today.setHours(0,0,0,0);
-
-    let filtered = allChats.filter(c => {
-      if (currentFilter === 'today') {
-        const d = c.timestamp?.toDate?.();
-        if (!d || d < today) return false;
-      }
-      if (search) {
-        return (c.userEmail||'').toLowerCase().includes(search) ||
-               (c.userText||'').toLowerCase().includes(search) ||
-               (c.aiText||'').toLowerCase().includes(search);
-      }
-      return true;
+  function renderEmails() {
+    const emailMap = {};
+    allChats.forEach(c => {
+      const email = c.userEmail || 'Unknown';
+      if (!emailMap[email]) emailMap[email] = { count: 0, last: null };
+      emailMap[email].count++;
+      const d = c.timestamp?.toDate?.();
+      if (d && (!emailMap[email].last || d > emailMap[email].last)) emailMap[email].last = d;
     });
 
-    if (filtered.length === 0) {
-      document.getElementById('chatsList').innerHTML = '<div class="no-data">No chats found</div>';
-      return;
-    }
+    const emails = Object.entries(emailMap).sort((a,b) => (b[1].last||0) - (a[1].last||0));
+    if (emails.length === 0) { document.getElementById('emailsList').innerHTML = '<div class="no-data">No users yet</div>'; return; }
 
-    document.getElementById('chatsList').innerHTML = filtered.map(c => {
-      const date = c.timestamp?.toDate?.();
-      const dateStr = date ? date.toLocaleDateString()+' '+date.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : 'Unknown';
+    document.getElementById('emailsList').innerHTML = emails.map(([email, info]) => `
+      <div class="email-card" onclick="showDays('${email}')">
+        <div class="email-left">
+          <div class="email-addr">📧 ${email}</div>
+          <div class="email-meta">Last active: ${info.last ? info.last.toLocaleDateString() : 'Unknown'}</div>
+        </div>
+        <div class="email-count">${info.count} chats</div>
+      </div>
+    `).join('');
+  }
+
+  window.showDays = (email) => {
+    selectedEmail = email;
+    const userChats = allChats.filter(c => (c.userEmail || 'Unknown') === email);
+    const dayMap = {};
+    userChats.forEach(c => {
+      const d = c.timestamp?.toDate?.();
+      const key = d ? d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : 'Unknown';
+      if (!dayMap[key]) dayMap[key] = { count: 0, date: d };
+      dayMap[key].count++;
+    });
+
+    const days = Object.entries(dayMap).sort((a,b) => (b[1].date||0) - (a[1].date||0));
+    document.getElementById('daysTitle').textContent = `📅 ${email}`;
+    document.getElementById('daysList').innerHTML = days.map(([day, info]) => `
+      <div class="day-card" onclick="showChats('${email}', '${day}')">
+        <div class="day-date">📅 ${day}</div>
+        <div class="day-count">${info.count} chats</div>
+      </div>
+    `).join('');
+
+    showView('viewDays');
+    document.getElementById('breadcrumb').innerHTML = `
+      <span onclick="showView('viewEmails'); updateBreadcrumb('home')">All Users</span>
+      <span class="sep">›</span>
+      <span class="current">${email}</span>
+    `;
+  };
+
+  window.showChats = (email, day) => {
+    const userChats = allChats.filter(c => {
+      const d = c.timestamp?.toDate?.();
+      const key = d ? d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : 'Unknown';
+      return (c.userEmail || 'Unknown') === email && key === day;
+    });
+
+    document.getElementById('chatsTitle').textContent = `💬 ${day}`;
+    document.getElementById('chatsList').innerHTML = userChats.map(c => {
+      const d = c.timestamp?.toDate?.();
+      const time = d ? d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
       return `
         <div class="chat-card">
-          <div class="chat-email">
-            <span>📧 ${c.userEmail || 'Unknown'}</span>
-            <span class="chat-time">🕐 ${dateStr}</span>
-          </div>
+          <div class="chat-time">🕐 ${time}</div>
+          <div class="chat-label">USER</div>
           <div class="chat-user-text">▶ ${c.userText || ''}</div>
+          <div class="chat-label" style="margin-top:8px">NEXA</div>
           <div class="chat-ai-text">⚡ ${c.aiText || ''}</div>
         </div>
       `;
     }).join('');
+
+    showView('viewChats');
+    document.getElementById('breadcrumb').innerHTML = `
+      <span onclick="showView('viewEmails')">All Users</span>
+      <span class="sep">›</span>
+      <span onclick="showDays('${email}')">${email}</span>
+      <span class="sep">›</span>
+      <span class="current">${day}</span>
+    `;
+  };
+
+  function showView(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
   }
 </script>
 </body>
