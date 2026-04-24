@@ -51,7 +51,48 @@ app.post('/ai-response', async (req, res) => {
   }
 });
 
+// IMAGE GENERATION
+app.post('/generate-image', async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) return res.status(400).json({ error: 'Prompt required' });
+
+    const HF_TOKEN = process.env.HF_TOKEN || '';
+    const response = await fetch(
+      'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${HF_TOKEN}`
+        },
+        body: JSON.stringify({
+          inputs: prompt,
+          parameters: { num_inference_steps: 28, width: 1024, height: 1024, guidance_scale: 3.5 }
+        })
+      }
+    );
+
+    if (!response.ok) {
+      if (response.status === 503) return res.status(503).json({ error: 'Model load ho raha hai, 20 second baad retry karo', retry: true });
+      const errText = await response.text();
+      return res.status(500).json({ error: errText });
+    }
+
+    const imageBuffer = await response.arrayBuffer();
+    const base64 = Buffer.from(imageBuffer).toString('base64');
+    res.json({ image: `data:image/jpeg;base64,${base64}` });
+
+  } catch (error) {
+    console.error('Image Error:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server chal raha hai: http://localhost:${PORT}`);
+});const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server chal raha hai: http://localhost:${PORT}`);
 });
