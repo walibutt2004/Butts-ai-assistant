@@ -16,6 +16,10 @@
       "dest": "server.js"
     },
     {
+      "src": "/generate-image",
+      "dest": "server.js"
+    },
+    {
       "src": "/",
       "dest": "index.html"
     }
