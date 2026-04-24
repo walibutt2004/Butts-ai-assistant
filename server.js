@@ -68,7 +68,7 @@ app.post('/generate-image', async (req, res) => {
         },
         body: JSON.stringify({
           inputs: prompt,
-          parameters: { num_inference_steps: 28, width: 1024, height: 1024, guidance_scale: 3.5 }
+          parameters: { num_inference_steps: 20, width: 768, height: 768, guidance_scale: 3.5 }
         })
       }
     );
