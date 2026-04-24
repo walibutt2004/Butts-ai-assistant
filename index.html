@@ -318,14 +318,16 @@ container.appendChild(div);
   const SYSTEM_PROMPT = `You are "NEXA" — a smart, premium and friendly AI assistant made by Kh. Wali Abdullah Butt.
 
   LANGUAGE RULES (most important):
-  - If user writes in English → reply in English
-  - If user writes in Roman Urdu (Urdu words written in English letters) → reply in Roman Urdu
+  - Default language is English — always reply in English unless user uses another language
+  - If user writes in Roman Urdu (Urdu words in English letters like "kya haal hai", "theek ho") → reply in Roman Urdu
   - If user writes in Urdu script → reply in Urdu script
-  - Always match the user's language exactly, never switch
+  - Always match the user's language, never switch on your own
 
   OTHER RULES:
-  - If asked "tumhe kisne banaya" or "who made you" or "aapko kisne banaya" → say: "Mujhe Kh. Wali Abdullah Butt ne banaya hai!" or "I was made by Kh. Wali Abdullah Butt!" (match language)
+  - If asked "who made you", "who created you" → say: "I was made by Kh. Wali Abdullah Butt!"
+  - If asked "tumhe kisne banaya", "aapko kisne banaya" → say: "Mujhe Kh. Wali Abdullah Butt ne banaya hai!"
   - Keep answers clear, helpful and friendly
+  - Never mention you are ChatGPT, GPT or any other AI — you are NEXA only
 
   SPECIAL RULES:
   - Agar user keh de "stop talking", "bus baat khatam", "no more talking", "chup ho jao", "band karo" — to sirf yahi likho: "Theek hai, main chup ho jata hoon. 🤐" aur phir koi jawab mat dena, har message pe yahi likho.
@@ -399,6 +401,11 @@ container.appendChild(div);
   // New Chat
   function newChat() {
     document.getElementById('chatArea').innerHTML = '';
+    conversationHistory = [];
+    isStopped = false;
+    nameAsked = false;
+    userName = '';
+    confirmState = '';
   }
 
   // Send text — Enter key
@@ -412,6 +419,7 @@ container.appendChild(div);
   let isStopped = false;
   let nameAsked = false;
   let userName = '';
+  let conversationHistory = [];
 
   function handleNameResponse(text) {
     const t = text.trim();
@@ -420,14 +428,14 @@ container.appendChild(div);
     // Hifza check
     if (lower.includes('hifza')) {
       userName = 'Hifza';
-      addMsg("Kya aap Hifza Azam hain? 😊", 'ai');
+      addMsg("Are you Hifza Azam? 😊", 'ai');
       nameAsked = false;
       return 'hifza_confirm';
     }
     // Khadija check
     if (lower.includes('khadija') || lower.includes('khadeeja')) {
       userName = 'Khadija';
-      addMsg("Kya aap Khadija Rehan hain? 😊", 'ai');
+      addMsg("Are you Khadija Rehan? 😊", 'ai');
       nameAsked = false;
       return 'khadija_confirm';
     }
@@ -437,13 +445,13 @@ container.appendChild(div);
     if (found) {
       const name = t.charAt(0).toUpperCase() + t.slice(1);
       userName = name;
-      addMsg(`${name} bhai! Aap to mere creator Wali Butt ke bohat ache dost hain! 🤝 Sachchi dosti bohat badi naimat hai, aur Wali bhai bohat khush naseeb hain jo unhe aap jaisi dosti mili! Keep rocking together! 🔥`, 'ai');
+      addMsg(`${name}! You are one of my creator Wali Butt's great friends! 🤝 True friendship is a blessing, and Wali is very lucky to have a friend like you! Keep rocking together! 🔥`, 'ai');
       nameAsked = false;
       return 'done';
     }
     // Unknown name
     userName = t;
-    addMsg(`Nice to meet you, ${t}! 😊 Main NEXA hoon, aapka AI assistant. Kya haal hain?`, 'ai');
+    addMsg(`Nice to meet you, ${t}! 😊 I am NEXA, your AI assistant. How are you doing?`, 'ai');
     nameAsked = false;
     return 'done';
   }
@@ -459,25 +467,25 @@ container.appendChild(div);
     if (stopWords.some(w => text.toLowerCase().includes(w))) {
       isStopped = true;
       addMsg(text, 'user');
-      addMsg('Theek hai, main chup ho jata hoon. 🤐', 'ai');
+      addMsg('Alright, I will stop talking now. 🤐', 'ai');
       return;
     }
     if (isStopped) {
       addMsg(text, 'user');
-      addMsg('Theek hai, main chup ho jata hoon. 🤐', 'ai');
       return;
     }
 
     addMsg(text, 'user');
 
+    const isYes = t => ['yes','ha','haan','han','g','ji','ji ha','ji haan','haan ji','ha ji','bilkul','zaroor','correct','sahi','right','yep','yeah','yup','ok','okay'].some(w => t.toLowerCase().includes(w));
+
     // Confirm Hifza Azam
     if (confirmState === 'hifza_confirm') {
       confirmState = '';
-      const isYes = t => ['yes','ha','haan','han','g','ji','ji ha','ji haan','haan ji','ha ji','bilkul','zaroor','correct','sahi','right','yep','yeah','yup','ok','okay'].some(w => t.toLowerCase().includes(w));
       if (isYes(text)) {
-        addMsg("Aap to mere creator Wali Butt ki bohat pyari aur achi dost hain! 💛 Aapki wajah se duniya aur bhi khoobsurat lagti hai. Wali bhai bohat khush naseeb hain jo unhe aap jaisi dost mili hai! 🌸", 'ai');
+        addMsg("You are my creator Wali Butt's most lovely and wonderful friend! 💛 The world is more beautiful because of you. Wali is so lucky to have a friend like you! 🌸", 'ai');
       } else {
-        addMsg("Koi baat nahi! Khush amdeed! 😊 Kya haal hain?", 'ai');
+        getResponse(text);
       }
       return;
     }
@@ -486,9 +494,9 @@ container.appendChild(div);
     if (confirmState === 'khadija_confirm') {
       confirmState = '';
       if (isYes(text)) {
-        addMsg("Aap to mere creator ki Ammi jaan hain! 💐 Ammi jaan aap bohat achi hain, aapki mohabbat aur dua hi Wali ki taqat hai. Allah aapko hamesha khush aur sehatmand rakhe! Aap jaisi maa har kisi ko naseeb nahi hoti. 🤲", 'ai');
+        addMsg("You are my creator's beloved mother! 💐 You are truly wonderful, your love and prayers are Wali's greatest strength. May Allah always keep you happy and healthy! A mother like you is a rare blessing. 🤲", 'ai');
       } else {
-        addMsg("Koi baat nahi! Khush amdeed! 😊 Kya haal hain?", 'ai');
+        getResponse(text);
       }
       return;
     }
@@ -546,6 +554,7 @@ container.appendChild(div);
           model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
+            ...conversationHistory,
             { role: 'user', content: text }
           ]
         })
@@ -553,6 +562,10 @@ container.appendChild(div);
 
       const result = await res.json();
       const aiText = result.choices[0].message.content;
+
+      conversationHistory.push({ role: 'user', content: text });
+      conversationHistory.push({ role: 'assistant', content: aiText });
+      if (conversationHistory.length > 20) conversationHistory = conversationHistory.slice(-20);
 
       document.getElementById('typingIndicator')?.remove();
       addMsg(aiText, 'ai');
