@@ -266,6 +266,19 @@
     await signOut(auth); closeSidebar();
   };
 
+  // Load system prompt from Firestore
+  async function loadPromptFromDB() {
+    try {
+      const snap = await getDocs(query(collection(db, 'settings')));
+      snap.forEach(d => {
+        if (d.id === 'system_prompt' && d.data().prompt) {
+          window.SYSTEM_PROMPT = d.data().prompt;
+        }
+      });
+    } catch(e) { console.error('Prompt load error:', e); }
+  }
+  loadPromptFromDB();
+
   window.startNewConversation = async () => {
     const user = auth.currentUser;
     if (!user) return null;
@@ -356,7 +369,7 @@
 
 <script>
   const GROQ_KEY = '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';
-  const SYSTEM_PROMPT = `You are "NEXA" — a smart, premium and friendly AI assistant made by Kh. Wali Abdullah Butt.
+  let SYSTEM_PROMPT = `You are "NEXA" — a smart, premium and friendly AI assistant made by Kh. Wali Abdullah Butt.
 
   LANGUAGE RULES (most important):
   - Default language is English — always reply in English unless user uses another language

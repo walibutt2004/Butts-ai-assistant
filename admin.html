@@ -151,10 +151,24 @@
 
   async function loadAllChats() {
     try {
-      const snap = await getDocs(query(collection(db, 'chats')));
+      const snap = await getDocs(query(collection(db, 'conversations')));
       allChats = [];
-      snap.forEach(doc => allChats.push({ id: doc.id, ...doc.data() }));
-      allChats.sort((a,b) => (b.timestamp?.seconds||0) - (a.timestamp?.seconds||0));
+      snap.forEach(d => {
+        const data = d.data();
+        const messages = data.messages || [];
+        messages.forEach(m => {
+          allChats.push({
+            id: d.id,
+            userId: data.userId,
+            userEmail: data.userEmail,
+            userText: m.userText,
+            aiText: m.aiText,
+            timestamp: data.lastUpdated,
+            msgTime: m.time
+          });
+        });
+      });
+      allChats.sort((a,b) => new Date(b.msgTime||0) - new Date(a.msgTime||0));
       updateStats();
       renderEmails();
     } catch(e) {
