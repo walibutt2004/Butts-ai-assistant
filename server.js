@@ -59,7 +59,7 @@ app.post('/generate-image', async (req, res) => {
 
     const HF_TOKEN = process.env.HF_TOKEN || '';
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev',
+      'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0',
       {
         method: 'POST',
         headers: {
@@ -68,7 +68,7 @@ app.post('/generate-image', async (req, res) => {
         },
         body: JSON.stringify({
           inputs: prompt,
-          parameters: { num_inference_steps: 20, width: 768, height: 768, guidance_scale: 3.5 }
+          parameters: { num_inference_steps: 20, width: 512, height: 512, guidance_scale: 7.5 }
         })
       }
     );
