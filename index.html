@@ -226,7 +226,7 @@
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-  import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+  import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, where, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 
   const firebaseConfig = {
     apiKey: "AIzaSyCLosHSZulEZW1ustqAXk8XfpLNWkjKyhw",
@@ -266,18 +266,36 @@
     await signOut(auth); closeSidebar();
   };
 
-  window.saveMessage = async (userText, aiText) => {
+  window.startNewConversation = async () => {
     const user = auth.currentUser;
-    if (!user) return;
+    if (!user) return null;
     try {
-      await addDoc(collection(db, 'chats'), {
+      const ref = await addDoc(collection(db, 'conversations'), {
         userId: user.uid,
         userEmail: user.email,
-        userText,
-        aiText,
-        timestamp: serverTimestamp()
+        messages: [],
+        lastMessage: '',
+        lastUpdated: serverTimestamp(),
+        createdAt: serverTimestamp()
       });
-      console.log('Chat saved!');
+      return ref.id;
+    } catch(e) { console.error('Conv error:', e); return null; }
+  };
+
+  window.saveMessage = async (userText, aiText) => {
+    const user = auth.currentUser;
+    if (!user || !window.currentConvId) return;
+    try {
+      const convRef = doc(db, 'conversations', window.currentConvId);
+      const snap = await getDocs(query(collection(db, 'conversations'), where('userId','==',user.uid)));
+      let messages = [];
+      snap.forEach(d => { if(d.id === window.currentConvId) messages = d.data().messages || []; });
+      messages.push({ userText, aiText, time: new Date().toISOString() });
+      await updateDoc(convRef, {
+        messages,
+        lastMessage: userText,
+        lastUpdated: serverTimestamp()
+      });
     } catch(e) { console.error('Save error:', e); }
   };
 
@@ -287,29 +305,52 @@
     if (!user) { container.innerHTML = '<div class="no-history">Login required</div>'; return; }
     try {
       container.innerHTML = '<div class="no-history">Loading...</div>';
-      const q = query(collection(db, 'chats'), where('userId','==',user.uid));
+      const q = query(collection(db, 'conversations'), where('userId','==',user.uid));
       const snap = await getDocs(q);
       if (snap.empty) { container.innerHTML = '<div class="no-history">No chats yet</div>'; return; }
+
+      let convs = [];
+      snap.forEach(d => convs.push({ id: d.id, ...d.data() }));
+      convs.sort((a,b) => (b.lastUpdated?.seconds||0) - (a.lastUpdated?.seconds||0));
+
       container.innerHTML = '';
-      snap.forEach(doc => {
-        const d = doc.data();
-        const date = d.timestamp?.toDate();
+      convs.forEach(conv => {
+        const messages = conv.messages || [];
+        if (messages.length === 0) return;
+        const lastMsg = messages[messages.length-1];
+        const date = conv.lastUpdated?.toDate?.();
         const dateStr = date ? date.toLocaleDateString()+' '+date.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
+
         const div = document.createElement('div');
         div.className = 'history-item';
-        div.innerHTML = `<div class="history-date">${dateStr}</div><div class="history-preview">▶ ${d.userText}</div>`;
-div.onclick = () => {
-  closeSidebar();
-  document.getElementById('chatArea').innerHTML = '';
-  addMsg(d.userText, 'user');
-  addMsg(d.aiText, 'ai');
-};
-container.appendChild(div);
+        div.style.position = 'relative';
+        div.innerHTML = `
+          <div class="history-date">${dateStr}</div>
+          <div class="history-preview">▶ ${lastMsg.userText || ''}</div>
+          <div style="position:absolute;top:8px;right:8px;font-size:0.7rem;color:rgba(255,80,80,0.6);cursor:pointer;padding:2px 6px;border:1px solid rgba(255,80,80,0.2);border-radius:4px" onclick="event.stopPropagation();deleteConv('${conv.id}')">🗑</div>
+        `;
+        div.onclick = () => {
+          closeSidebar();
+          document.getElementById('chatArea').innerHTML = '';
+          window.currentConvId = conv.id;
+          messages.forEach(m => {
+            addMsg(m.userText, 'user');
+            addMsg(m.aiText, 'ai');
+          });
+        };
+        container.appendChild(div);
       });
-    } catch(e) { 
-      console.error('Load error full:', e);
-      container.innerHTML = '<div class="no-history">Error: ' + e.message + '</div>'; 
+    } catch(e) {
+      console.error('Load error:', e);
+      container.innerHTML = '<div class="no-history">Error: ' + e.message + '</div>';
     }
+  };
+
+  window.deleteConv = async (convId) => {
+    try {
+      await deleteDoc(doc(db, 'conversations', convId));
+      window.loadSidebarHistory();
+    } catch(e) { console.error('Delete error:', e); }
   };
 </script>
 
@@ -387,7 +428,8 @@ container.appendChild(div);
       setTimeout(()=>{ mainApp.style.transition='opacity 0.8s'; mainApp.style.opacity='1'; },50);
       document.getElementById('sphereWrapper').style.animation='sphereDrop 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards';
       document.getElementById('chatBar').style.animation='slideUp 0.6s ease 0.3s forwards';
-      setTimeout(()=>{
+      setTimeout(async ()=>{
+        window.currentConvId = await window.startNewConversation();
         addMsg('HELLO! 👋', 'ai');
         setTimeout(()=>{ addMsg("What's your name? 😊", 'ai'); nameAsked = true; }, 1000);
       }, 800);
@@ -399,13 +441,14 @@ container.appendChild(div);
   function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); }
 
   // New Chat
-  function newChat() {
+  async function newChat() {
     document.getElementById('chatArea').innerHTML = '';
     conversationHistory = [];
     isStopped = false;
     nameAsked = false;
     userName = '';
     confirmState = '';
+    window.currentConvId = await window.startNewConversation();
   }
 
   // Send text — Enter key
