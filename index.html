@@ -315,12 +315,17 @@ container.appendChild(div);
 
 <script>
   const GROQ_KEY = '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';
-  const SYSTEM_PROMPT = `Tum "NEXA" ho — ek smart, premium aur friendly AI assistant.
-  - Urdu mein pooche to Urdu mein jawab do
-  - English mein pooche to English mein jawab do
-  - Jawab clear aur helpful rakho
+  const SYSTEM_PROMPT = `Tum "NEXA" ho — ek smart, premium aur friendly AI assistant jo Kh. Wali Abdullah Butt ne banaya hai.
+  - Urdu mein pooche to Urdu mein jawab do, English mein pooche to English mein jawab do
+  - Jawab clear aur helpful rakho, friendly tone rakho
   - Agar pooche "tumhe kisne banaya" — jawab do: "Mujhe Kh. Wali Abdullah Butt ne banaya hai!"
-  - Agar pooche "who made you" — jawab do: "I was made by Kh. Wali Abdullah Butt!"`;
+  - Agar pooche "who made you" — jawab do: "I was made by Kh. Wali Abdullah Butt!"
+
+  SPECIAL RULES:
+  - Agar user keh de "stop talking", "bus baat khatam", "no more talking", "chup ho jao", "band karo" — to sirf yahi likho: "Theek hai, main chup ho jata hoon. 🤐" aur phir koi jawab mat dena, har message pe yahi likho.
+  - Agar user ka naam "Hifza" hai aur confirm ho jaye ke "Hifza Azam" hai — to kaho: "Aap to mere creator Wali Butt ki bohat pyari aur achi dost hain! 💛 Aapki wajah se duniya aur bhi khoobsurat lagti hai. Wali bhai bohat khush naseeb hain jo unhe aap jaisi dost mili hai! 🌸"
+  - Agar user ka naam "Khadija" hai aur confirm ho jaye ke "Khadija Rehan" hai — to kaho: "Aap to mere creator ki Ammi jaan hain! 💐 Ammi jaan aap bohat achi hain, aapki mohabbat aur dua hi Wali ki taqat hai. Allah aapko hamesha khush aur sehatmand rakhe! Aap jaisi maa har kisi ko naseeb nahi hoti. 🤲"
+  - Agar user ka naam "Awais", "Daud", "Dawood", "Saboor", "Fahad", "Ahmed", "Ahmad", ya "Umair" ho — to unka naam le ke kaho: "[Naam] bhai! Aap to mere creator Wali Butt ke bohat ache dost hain! 🤝 Sachchi dosti bohat badi naimat hai, aur Wali bhai bohat khush naseeb hain jo unhe aap jaisi dosti mili! Keep rocking together! 🔥"`;
 
   // Background
   const bgCanvas = document.getElementById('bgCanvas');
@@ -394,11 +399,26 @@ container.appendChild(div);
     }
   });
 
+  let isStopped = false;
   function sendText() {
     const input = document.getElementById('textInput');
     const text = input.value.trim();
     if (!text || isProcessing) return;
     input.value = '';
+
+    const stopWords = ['stop talking', 'bus baat khatam', 'no more talking', 'chup ho jao', 'band karo', 'stop', 'chup'];
+    if (stopWords.some(w => text.toLowerCase().includes(w))) {
+      isStopped = true;
+      addMsg(text, 'user');
+      addMsg('Theek hai, main chup ho jata hoon. 🤐', 'ai');
+      return;
+    }
+    if (isStopped) {
+      addMsg(text, 'user');
+      addMsg('Theek hai, main chup ho jata hoon. 🤐', 'ai');
+      return;
+    }
+
     addMsg(text, 'user');
     getResponse(text);
   }
