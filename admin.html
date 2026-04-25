@@ -10,82 +10,92 @@
     body { background: #080800; font-family: 'Rajdhani', sans-serif; color: white; min-height: 100vh; }
     @keyframes goldShine { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
+    /* LOGIN */
     .login-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; }
     .logo { font-family: 'Orbitron', monospace; font-size: 2rem; font-weight: 900; background: linear-gradient(90deg, #f5c842, #fff7c0, #f5c842); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: goldShine 3s linear infinite; letter-spacing: 6px; }
     .subtitle { font-size: 0.8rem; color: rgba(245,200,66,0.5); letter-spacing: 3px; font-family: 'Orbitron', monospace; }
     .google-btn { display: flex; align-items: center; gap: 12px; padding: 14px 28px; border-radius: 50px; border: 1px solid rgba(245,200,66,0.4); background: rgba(245,200,66,0.08); color: rgba(245,200,66,0.95); font-size: 0.9rem; cursor: pointer; font-family: 'Orbitron', monospace; letter-spacing: 1px; transition: all 0.3s; }
     .google-btn:hover { background: rgba(245,200,66,0.15); }
-    .error-msg { color: rgba(255,80,80,0.9); font-size: 0.85rem; text-align: center; display: none; }
+    .error-msg { color: rgba(255,80,80,0.9); font-size: 0.85rem; display: none; }
 
-    .admin-panel { display: none; padding: 20px; max-width: 960px; margin: 0 auto; }
-    .admin-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(245,200,66,0.2); margin-bottom: 24px; }
-    .admin-title { font-family: 'Orbitron', monospace; font-size: 1rem; color: rgba(245,200,66,0.9); letter-spacing: 3px; }
-    .logout-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(255,80,80,0.3); background: rgba(255,80,80,0.07); color: rgba(255,120,120,0.8); font-family: 'Orbitron', monospace; font-size: 0.7rem; cursor: pointer; }
+    /* ADMIN */
+    .admin-panel { display: none; min-height: 100vh; flex-direction: column; }
+    .admin-header { padding: 14px 20px; border-bottom: 1px solid rgba(245,200,66,0.15); background: rgba(5,4,0,0.98); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .admin-title { font-family: 'Orbitron', monospace; font-size: 0.95rem; color: rgba(245,200,66,0.9); letter-spacing: 3px; }
+    .logout-btn { padding: 7px 14px; border-radius: 8px; border: 1px solid rgba(255,80,80,0.3); background: rgba(255,80,80,0.07); color: rgba(255,120,120,0.8); font-family: 'Orbitron', monospace; font-size: 0.65rem; cursor: pointer; }
 
-    .stats { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-    .stat-card { background: rgba(245,200,66,0.05); border: 1px solid rgba(245,200,66,0.15); border-radius: 12px; padding: 16px 24px; flex: 1; min-width: 140px; }
-    .stat-num { font-family: 'Orbitron', monospace; font-size: 1.8rem; color: rgba(245,200,66,0.9); }
-    .stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 4px; letter-spacing: 1px; }
+    /* STATS */
+    .stats-bar { display: flex; gap: 12px; padding: 16px 20px; flex-wrap: wrap; border-bottom: 1px solid rgba(245,200,66,0.08); }
+    .stat-card { background: rgba(245,200,66,0.05); border: 1px solid rgba(245,200,66,0.12); border-radius: 10px; padding: 12px 20px; flex: 1; min-width: 120px; }
+    .stat-num { font-family: 'Orbitron', monospace; font-size: 1.6rem; color: rgba(245,200,66,0.9); }
+    .stat-label { font-size: 0.68rem; color: rgba(255,255,255,0.35); margin-top: 3px; letter-spacing: 1px; }
 
-    /* BREADCRUMB */
-    .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 0.8rem; color: rgba(245,200,66,0.5); font-family: 'Orbitron', monospace; flex-wrap: wrap; }
-    .breadcrumb span { cursor: pointer; transition: color 0.2s; }
-    .breadcrumb span:hover { color: rgba(245,200,66,0.9); }
-    .breadcrumb .sep { color: rgba(245,200,66,0.2); }
-    .breadcrumb .current { color: rgba(245,200,66,0.9); cursor: default; }
+    /* NAV TABS */
+    .nav-tabs { display: flex; gap: 10px; padding: 16px 20px; border-bottom: 1px solid rgba(245,200,66,0.08); flex-wrap: wrap; }
+    .nav-tab { padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(245,200,66,0.2); background: transparent; color: rgba(245,200,66,0.5); font-family: 'Orbitron', monospace; font-size: 0.68rem; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+    .nav-tab:hover { background: rgba(245,200,66,0.08); color: rgba(245,200,66,0.8); }
+    .nav-tab.active { background: rgba(245,200,66,0.15); border-color: rgba(245,200,66,0.5); color: rgba(245,200,66,1); box-shadow: 0 0 15px rgba(245,200,66,0.1); }
 
-    /* VIEWS */
-    .view { display: none; }
-    .view.active { display: block; }
+    /* PAGES */
+    .page { display: none; padding: 24px 20px; max-width: 860px; margin: 0 auto; width: 100%; }
+    .page.active { display: block; }
+    .page-title { font-family: 'Orbitron', monospace; font-size: 0.8rem; color: rgba(245,200,66,0.6); letter-spacing: 2px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(245,200,66,0.1); }
 
-    /* EMAILS LIST */
+    /* INPUTS */
+    .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+    .field-input { width: 100%; padding: 11px 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(245,200,66,0.2); border-radius: 10px; color: white; font-size: 0.88rem; font-family: 'Rajdhani', sans-serif; outline: none; transition: border 0.2s; }
+    .field-input:focus { border-color: rgba(245,200,66,0.5); }
+    .field-input::placeholder { color: rgba(245,200,66,0.2); }
+    textarea.field-input { height: 220px; resize: vertical; line-height: 1.6; }
+    .save-btn { padding: 11px 24px; border-radius: 10px; border: 1px solid rgba(245,200,66,0.4); background: rgba(245,200,66,0.1); color: rgba(245,200,66,0.9); font-family: 'Orbitron', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
+    .save-btn:hover { background: rgba(245,200,66,0.2); box-shadow: 0 0 15px rgba(245,200,66,0.2); }
+    .success-msg { display: none; margin-top: 8px; font-size: 0.78rem; color: rgba(100,255,100,0.8); }
+
+    /* GREETING LIST */
+    .greeting-list { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .greeting-card { background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.12); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .greeting-info { flex: 1; }
+    .greeting-email { font-size: 0.82rem; color: rgba(245,200,66,0.8); margin-bottom: 4px; }
+    .greeting-name { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 3px; }
+    .greeting-msg { font-size: 0.75rem; color: rgba(255,255,255,0.35); }
+    .del-btn { padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(255,80,80,0.2); background: rgba(255,80,80,0.07); color: rgba(255,100,100,0.7); font-size: 0.72rem; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+    .del-btn:hover { background: rgba(255,80,80,0.15); }
+
+    /* USERS */
     .emails-list { display: flex; flex-direction: column; gap: 10px; }
     .email-card { background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.12); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; }
     .email-card:hover { background: rgba(245,200,66,0.09); border-color: rgba(245,200,66,0.3); transform: translateX(4px); }
-    .email-left { display: flex; flex-direction: column; gap: 4px; }
-    .email-addr { font-size: 0.9rem; color: rgba(245,200,66,0.9); }
-    .email-meta { font-size: 0.72rem; color: rgba(255,255,255,0.35); }
-    .email-count { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: rgba(245,200,66,0.6); background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2); border-radius: 20px; padding: 4px 12px; }
+    .email-addr { font-size: 0.88rem; color: rgba(245,200,66,0.9); margin-bottom: 4px; }
+    .email-meta { font-size: 0.7rem; color: rgba(255,255,255,0.3); }
+    .email-count { font-family: 'Orbitron', monospace; font-size: 0.72rem; color: rgba(245,200,66,0.6); background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2); border-radius: 20px; padding: 4px 12px; flex-shrink: 0; }
 
-    /* DAYS LIST */
     .days-list { display: flex; flex-direction: column; gap: 10px; }
     .day-card { background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.12); border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; }
     .day-card:hover { background: rgba(245,200,66,0.09); border-color: rgba(245,200,66,0.3); transform: translateX(4px); }
-    .day-date { font-family: 'Orbitron', monospace; font-size: 0.85rem; color: rgba(245,200,66,0.9); }
-    .day-count { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: rgba(245,200,66,0.6); background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2); border-radius: 20px; padding: 4px 12px; }
+    .day-date { font-family: 'Orbitron', monospace; font-size: 0.82rem; color: rgba(245,200,66,0.9); }
+    .day-count { font-family: 'Orbitron', monospace; font-size: 0.72rem; color: rgba(245,200,66,0.6); background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2); border-radius: 20px; padding: 4px 12px; }
 
-    /* CHATS LIST */
     .chats-list { display: flex; flex-direction: column; gap: 12px; }
     .chat-card { background: rgba(245,200,66,0.03); border: 1px solid rgba(245,200,66,0.1); border-radius: 12px; padding: 16px; }
     .chat-time { font-size: 0.65rem; color: rgba(245,200,66,0.4); font-family: 'Orbitron', monospace; margin-bottom: 10px; }
-    .chat-user-text { font-size: 0.88rem; color: rgba(255,255,255,0.85); margin-bottom: 8px; padding: 8px 12px; background: rgba(245,200,66,0.06); border-radius: 8px; }
+    .chat-label { font-size: 0.62rem; color: rgba(255,255,255,0.25); letter-spacing: 1px; margin-bottom: 4px; }
+    .chat-user-text { font-size: 0.88rem; color: rgba(255,255,255,0.85); padding: 8px 12px; background: rgba(245,200,66,0.06); border-radius: 8px; margin-bottom: 8px; }
     .chat-ai-text { font-size: 0.85rem; color: rgba(245,200,66,0.6); line-height: 1.6; padding: 8px 12px; background: rgba(100,80,0,0.1); border-radius: 8px; }
-    .chat-label { font-size: 0.65rem; color: rgba(255,255,255,0.3); margin-bottom: 3px; letter-spacing: 1px; }
 
-    .loading { text-align: center; padding: 40px; color: rgba(245,200,66,0.4); font-family: 'Orbitron', monospace; font-size: 0.75rem; letter-spacing: 2px; }
-    .no-data { text-align: center; padding: 40px; color: rgba(255,255,255,0.2); }
-
-    /* PROMPT EDITOR */
-    .prompt-section { background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.15); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-    .prompt-title { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: rgba(245,200,66,0.7); letter-spacing: 2px; margin-bottom: 12px; }
-    .prompt-textarea { width: 100%; height: 200px; padding: 12px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(245,200,66,0.2); border-radius: 8px; color: rgba(255,255,255,0.85); font-size: 0.85rem; font-family: 'Rajdhani', sans-serif; outline: none; resize: vertical; line-height: 1.6; }
-    .prompt-textarea::placeholder { color: rgba(245,200,66,0.2); }
-    .prompt-save-btn { margin-top: 10px; padding: 10px 24px; border-radius: 8px; border: 1px solid rgba(245,200,66,0.4); background: rgba(245,200,66,0.1); color: rgba(245,200,66,0.9); font-family: 'Orbitron', monospace; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
-    .prompt-save-btn:hover { background: rgba(245,200,66,0.2); }
-    .prompt-save-msg { display: none; margin-top: 8px; font-size: 0.78rem; color: rgba(100,255,100,0.8); }
-
-    /* GREETING SECTION */
-    .greeting-section { background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.15); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-    .greeting-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-    .greeting-input { width: 100%; padding: 10px 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(245,200,66,0.2); border-radius: 8px; color: white; font-size: 0.85rem; font-family: 'Rajdhani', sans-serif; outline: none; }
-    .greeting-input::placeholder { color: rgba(245,200,66,0.2); }
-    .back-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(245,200,66,0.2); background: transparent; color: rgba(245,200,66,0.6); font-family: 'Orbitron', monospace; font-size: 0.7rem; cursor: pointer; margin-bottom: 16px; transition: all 0.2s; }
-    .back-btn:hover { background: rgba(245,200,66,0.1); color: rgba(245,200,66,0.9); }
-    .section-title { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: rgba(245,200,66,0.5); letter-spacing: 2px; margin-bottom: 14px; }
+    .back-btn { padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(245,200,66,0.2); background: transparent; color: rgba(245,200,66,0.6); font-family: 'Orbitron', monospace; font-size: 0.65rem; cursor: pointer; margin-bottom: 16px; transition: all 0.2s; }
+    .back-btn:hover { background: rgba(245,200,66,0.1); }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 0.75rem; color: rgba(245,200,66,0.4); font-family: 'Orbitron', monospace; flex-wrap: wrap; }
+    .breadcrumb span { cursor: pointer; transition: color 0.2s; }
+    .breadcrumb span:hover { color: rgba(245,200,66,0.8); }
+    .breadcrumb .sep { color: rgba(245,200,66,0.2); cursor: default; }
+    .breadcrumb .cur { color: rgba(245,200,66,0.9); cursor: default; }
+    .loading { text-align: center; padding: 40px; color: rgba(245,200,66,0.4); font-family: 'Orbitron', monospace; font-size: 0.72rem; letter-spacing: 2px; }
+    .no-data { text-align: center; padding: 30px; color: rgba(255,255,255,0.2); font-size: 0.82rem; }
   </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div class="logo">NEXA</div>
   <div class="subtitle">ADMIN PANEL</div>
@@ -93,66 +103,68 @@
   <div class="error-msg" id="errorMsg">⛔ Access Denied!</div>
 </div>
 
+<!-- ADMIN PANEL -->
 <div class="admin-panel" id="adminPanel">
   <div class="admin-header">
     <div class="admin-title">⚡ NEXA ADMIN</div>
     <button class="logout-btn" onclick="adminLogout()">LOGOUT</button>
   </div>
 
-  <div class="stats">
+  <div class="stats-bar">
     <div class="stat-card"><div class="stat-num" id="totalChats">0</div><div class="stat-label">TOTAL CHATS</div></div>
     <div class="stat-card"><div class="stat-num" id="totalUsers">0</div><div class="stat-label">UNIQUE USERS</div></div>
     <div class="stat-card"><div class="stat-num" id="todayChats">0</div><div class="stat-label">TODAY'S CHATS</div></div>
   </div>
 
-  <div class="breadcrumb" id="breadcrumb">
-    <span class="current">All Users</span>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('pageUsers')">👥 ALL USERS</button>
+    <button class="nav-tab" onclick="showPage('pageGreetings')">👋 CUSTOM GREETINGS</button>
+    <button class="nav-tab" onclick="showPage('pagePrompt')">⚙️ SYSTEM PROMPT</button>
   </div>
 
-  <!-- Custom Greetings -->
-  <div class="greeting-section">
-    <div class="prompt-title">👋 CUSTOM GREETINGS</div>
-    <div class="greeting-inputs">
-      <input class="greeting-input" id="greetingEmail" placeholder="User email (e.g. ali@gmail.com)" />
-      <input class="greeting-input" id="greetingName" placeholder="Display name (e.g. Ali Bhai)" />
-      <input class="greeting-input" id="greetingMessage" placeholder="Custom greeting message..." />
+  <!-- PAGE: ALL USERS -->
+  <div class="page active" id="pageUsers">
+    <div class="breadcrumb" id="breadcrumb"><span class="cur">All Users</span></div>
+
+    <div id="viewEmails">
+      <div class="emails-list" id="emailsList"><div class="loading">LOADING...</div></div>
     </div>
-    <button class="prompt-save-btn" onclick="saveGreeting()">💾 SAVE GREETING</button>
-    <div class="prompt-save-msg" id="greetingSaveMsg">✅ Saved!</div>
-    <div style="margin-top:16px" id="greetingsList"></div>
+    <div id="viewDays" style="display:none">
+      <div class="days-list" id="daysList"></div>
+    </div>
+    <div id="viewChats" style="display:none">
+      <div class="chats-list" id="chatsList"></div>
+    </div>
   </div>
 
-  <!-- System Prompt Editor -->
-  <div class="prompt-section">
-    <div class="prompt-title">⚙️ NEXA SYSTEM PROMPT</div>
-    <textarea class="prompt-textarea" id="promptTextarea" placeholder="NEXA ka system prompt yahan likho..."></textarea>
-    <button class="prompt-save-btn" onclick="saveSystemPrompt()">💾 SAVE PROMPT</button>
-    <div class="prompt-save-msg" id="promptSaveMsg">✅ Saved successfully!</div>
+  <!-- PAGE: CUSTOM GREETINGS -->
+  <div class="page" id="pageGreetings">
+    <div class="page-title">👋 CUSTOM GREETINGS</div>
+    <div class="input-group">
+      <input class="field-input" id="greetingEmail" placeholder="User email (e.g. ali@gmail.com)" />
+      <input class="field-input" id="greetingName" placeholder="Display name (e.g. Ali Bhai)" />
+      <input class="field-input" id="greetingMessage" placeholder="Custom greeting message..." />
+    </div>
+    <button class="save-btn" onclick="saveGreeting()">💾 SAVE GREETING</button>
+    <div class="success-msg" id="greetingSaveMsg">✅ Saved successfully!</div>
+    <div class="greeting-list" id="greetingsList"></div>
   </div>
 
-  <!-- View 1: All Emails -->
-  <div class="view active" id="viewEmails">
-    <div class="section-title">👥 ALL USERS</div>
-    <div class="emails-list" id="emailsList"><div class="loading">LOADING...</div></div>
-  </div>
-
-  <!-- View 2: Days of a user -->
-  <div class="view" id="viewDays">
-    <div class="section-title" id="daysTitle">📅 CHAT DAYS</div>
-    <div class="days-list" id="daysList"></div>
-  </div>
-
-  <!-- View 3: Chats of a day -->
-  <div class="view" id="viewChats">
-    <div class="section-title" id="chatsTitle">💬 CHATS</div>
-    <div class="chats-list" id="chatsList"></div>
+  <!-- PAGE: SYSTEM PROMPT -->
+  <div class="page" id="pagePrompt">
+    <div class="page-title">⚙️ NEXA SYSTEM PROMPT</div>
+    <div class="input-group">
+      <textarea class="field-input" id="promptTextarea" placeholder="NEXA ka system prompt yahan likho..."></textarea>
+    </div>
+    <button class="save-btn" onclick="saveSystemPrompt()">💾 SAVE PROMPT</button>
+    <div class="success-msg" id="promptSaveMsg">✅ Saved successfully!</div>
   </div>
 </div>
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
-  import { getFirestore, collection, getDocs, query } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+  import { getFirestore, collection, getDocs, query, where, setDoc, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 
   const ADMIN_EMAIL = 'ironmanwaliabdullah@gmail.com';
   const firebaseConfig = {
@@ -169,14 +181,12 @@
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
   let allChats = [];
-  let selectedEmail = '';
-  let currentPrompt = '';
   let customGreetings = {};
 
   onAuthStateChanged(auth, (user) => {
     if (user && user.email === ADMIN_EMAIL) {
       document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('adminPanel').style.display = 'block';
+      document.getElementById('adminPanel').style.display = 'flex';
       loadAllChats();
       loadSystemPrompt();
       loadCustomGreetings();
@@ -189,6 +199,142 @@
   window.adminLogin = async () => { try { await signInWithPopup(auth, provider); } catch(e) { console.error(e); } };
   window.adminLogout = async () => { await signOut(auth); location.reload(); };
 
+  // STATS + USERS
+  async function loadAllChats() {
+    try {
+      const snap = await getDocs(query(collection(db, 'conversations')));
+      allChats = [];
+      snap.forEach(d => {
+        const data = d.data();
+        const messages = data.messages || [];
+        messages.forEach(m => {
+          allChats.push({ id: d.id, userId: data.userId, userEmail: data.userEmail, userText: m.userText, aiText: m.aiText, timestamp: data.lastUpdated, msgTime: m.time });
+        });
+      });
+      allChats.sort((a,b) => new Date(b.msgTime||0) - new Date(a.msgTime||0));
+      updateStats();
+      renderEmails();
+    } catch(e) {
+      document.getElementById('emailsList').innerHTML = '<div class="no-data">Error: ' + e.message + '</div>';
+    }
+  }
+
+  function updateStats() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const todayCount = allChats.filter(c => new Date(c.msgTime||0) >= today).length;
+    const uniqueUsers = new Set(allChats.map(c => c.userEmail)).size;
+    document.getElementById('totalChats').textContent = allChats.length;
+    document.getElementById('totalUsers').textContent = uniqueUsers;
+    document.getElementById('todayChats').textContent = todayCount;
+  }
+
+  function renderEmails() {
+    const emailMap = {};
+    allChats.forEach(c => {
+      const email = c.userEmail || 'Unknown';
+      if (!emailMap[email]) emailMap[email] = { count: 0, last: null };
+      emailMap[email].count++;
+      const d = new Date(c.msgTime||0);
+      if (!emailMap[email].last || d > emailMap[email].last) emailMap[email].last = d;
+    });
+    const emails = Object.entries(emailMap).sort((a,b) => (b[1].last||0) - (a[1].last||0));
+    if (emails.length === 0) { document.getElementById('emailsList').innerHTML = '<div class="no-data">No users yet</div>'; return; }
+    document.getElementById('emailsList').innerHTML = emails.map(([email, info]) => `
+      <div class="email-card" onclick="showDays('${email}')">
+        <div>
+          <div class="email-addr">📧 ${email}</div>
+          <div class="email-meta">Last active: ${info.last ? info.last.toLocaleDateString() : 'Unknown'}</div>
+        </div>
+        <div class="email-count">${info.count} chats</div>
+      </div>
+    `).join('');
+  }
+
+  window.showDays = (email) => {
+    const userChats = allChats.filter(c => (c.userEmail||'Unknown') === email);
+    const dayMap = {};
+    userChats.forEach(c => {
+      const d = new Date(c.msgTime||0);
+      const key = d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+      if (!dayMap[key]) dayMap[key] = { count: 0, date: d };
+      dayMap[key].count++;
+    });
+    const days = Object.entries(dayMap).sort((a,b) => b[1].date - a[1].date);
+    document.getElementById('daysList').innerHTML = days.map(([day, info]) => `
+      <div class="day-card" onclick="showChats('${email}', '${day}')">
+        <div class="day-date">📅 ${day}</div>
+        <div class="day-count">${info.count} chats</div>
+      </div>
+    `).join('');
+    document.getElementById('viewEmails').style.display = 'none';
+    document.getElementById('viewDays').style.display = 'block';
+    document.getElementById('viewChats').style.display = 'none';
+    document.getElementById('breadcrumb').innerHTML = `
+      <span onclick="goBack('emails')">All Users</span>
+      <span class="sep">›</span>
+      <span class="cur">${email}</span>
+    `;
+  };
+
+  window.showChats = (email, day) => {
+    const userChats = allChats.filter(c => {
+      const d = new Date(c.msgTime||0);
+      const key = d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+      return (c.userEmail||'Unknown') === email && key === day;
+    });
+    document.getElementById('chatsList').innerHTML = userChats.map(c => {
+      const d = new Date(c.msgTime||0);
+      const time = d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      return `
+        <div class="chat-card">
+          <div class="chat-time">🕐 ${time}</div>
+          <div class="chat-label">USER</div>
+          <div class="chat-user-text">${c.userText||''}</div>
+          <div class="chat-label">NEXA</div>
+          <div class="chat-ai-text">${c.aiText||''}</div>
+        </div>
+      `;
+    }).join('');
+    document.getElementById('viewEmails').style.display = 'none';
+    document.getElementById('viewDays').style.display = 'none';
+    document.getElementById('viewChats').style.display = 'block';
+    document.getElementById('breadcrumb').innerHTML = `
+      <span onclick="goBack('emails')">All Users</span>
+      <span class="sep">›</span>
+      <span onclick="showDays('${email}')">${email}</span>
+      <span class="sep">›</span>
+      <span class="cur">${day}</span>
+    `;
+  };
+
+  window.goBack = (to) => {
+    if (to === 'emails') {
+      document.getElementById('viewEmails').style.display = 'block';
+      document.getElementById('viewDays').style.display = 'none';
+      document.getElementById('viewChats').style.display = 'none';
+      document.getElementById('breadcrumb').innerHTML = '<span class="cur">All Users</span>';
+    }
+  };
+
+  // SYSTEM PROMPT
+  async function loadSystemPrompt() {
+    try {
+      const snap = await getDocs(query(collection(db, 'settings')));
+      snap.forEach(d => { if (d.id === 'system_prompt') document.getElementById('promptTextarea').value = d.data().prompt || ''; });
+    } catch(e) { console.error(e); }
+  }
+
+  window.saveSystemPrompt = async () => {
+    const prompt = document.getElementById('promptTextarea').value.trim();
+    if (!prompt) return;
+    try {
+      await setDoc(doc(db, 'settings', 'system_prompt'), { prompt, updatedAt: new Date().toISOString() });
+      document.getElementById('promptSaveMsg').style.display = 'block';
+      setTimeout(() => document.getElementById('promptSaveMsg').style.display = 'none', 2000);
+    } catch(e) { alert('Error: ' + e.message); }
+  };
+
+  // CUSTOM GREETINGS
   async function loadCustomGreetings() {
     try {
       const snap = await getDocs(query(collection(db, 'customGreetings')));
@@ -201,14 +347,15 @@
   function renderGreetings() {
     const container = document.getElementById('greetingsList');
     const entries = Object.entries(customGreetings);
-    if (entries.length === 0) { container.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-size:0.8rem;padding:10px 0">No custom greetings yet</div>'; return; }
+    if (entries.length === 0) { container.innerHTML = '<div class="no-data">No custom greetings yet</div>'; return; }
     container.innerHTML = entries.map(([email, data]) => `
-      <div style="background:rgba(245,200,66,0.04);border:1px solid rgba(245,200,66,0.12);border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px">
-        <div>
-          <div style="font-size:0.82rem;color:rgba(245,200,66,0.8)">📧 ${email}</div>
-          <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:4px">${data.message || ''}</div>
+      <div class="greeting-card">
+        <div class="greeting-info">
+          <div class="greeting-email">📧 ${email}</div>
+          <div class="greeting-name">👤 ${data.name || ''}</div>
+          <div class="greeting-msg">💬 ${data.message || ''}</div>
         </div>
-        <div style="cursor:pointer;color:rgba(255,80,80,0.6);font-size:0.75rem;border:1px solid rgba(255,80,80,0.2);border-radius:6px;padding:4px 10px" onclick="deleteGreeting('${email}')">🗑</div>
+        <button class="del-btn" onclick="deleteGreeting('${email}')">🗑 DELETE</button>
       </div>
     `).join('');
   }
@@ -217,9 +364,8 @@
     const email = document.getElementById('greetingEmail').value.trim().toLowerCase();
     const name = document.getElementById('greetingName').value.trim();
     const message = document.getElementById('greetingMessage').value.trim();
-    if (!email || !message) { alert('Email aur message zaroor bharo!'); return; }
+    if (!email || !message) { alert('Email aur message zaroor likho!'); return; }
     try {
-      const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
       await setDoc(doc(db, 'customGreetings', email), { name, message, email, createdAt: new Date().toISOString() });
       document.getElementById('greetingEmail').value = '';
       document.getElementById('greetingName').value = '';
@@ -233,163 +379,19 @@
 
   window.deleteGreeting = async (email) => {
     try {
-      const { deleteDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
       await deleteDoc(doc(db, 'customGreetings', email));
       delete customGreetings[email];
       renderGreetings();
     } catch(e) { console.error(e); }
   };
 
-  async function loadSystemPrompt() {
-    try {
-      const snap = await getDocs(query(collection(db, 'settings')));
-      snap.forEach(d => {
-        if (d.id === 'system_prompt') currentPrompt = d.data().prompt || '';
-      });
-      document.getElementById('promptTextarea').value = currentPrompt;
-    } catch(e) { console.error(e); }
-  }
-
-  window.saveSystemPrompt = async () => {
-    const prompt = document.getElementById('promptTextarea').value.trim();
-    if (!prompt) return;
-    try {
-      const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
-      await setDoc(doc(db, 'settings', 'system_prompt'), { prompt, updatedAt: new Date().toISOString() });
-      document.getElementById('promptSaveMsg').style.display = 'block';
-      setTimeout(() => document.getElementById('promptSaveMsg').style.display = 'none', 2000);
-      currentPrompt = prompt;
-    } catch(e) { alert('Error: ' + e.message); }
+  // PAGE NAVIGATION
+  window.showPage = (pageId) => {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+    event.target.classList.add('active');
   };
-
-  async function loadAllChats() {
-    try {
-      const snap = await getDocs(query(collection(db, 'conversations')));
-      allChats = [];
-      snap.forEach(d => {
-        const data = d.data();
-        const messages = data.messages || [];
-        messages.forEach(m => {
-          allChats.push({
-            id: d.id,
-            userId: data.userId,
-            userEmail: data.userEmail,
-            userText: m.userText,
-            aiText: m.aiText,
-            timestamp: data.lastUpdated,
-            msgTime: m.time
-          });
-        });
-      });
-      allChats.sort((a,b) => new Date(b.msgTime||0) - new Date(a.msgTime||0));
-      updateStats();
-      renderEmails();
-    } catch(e) {
-      document.getElementById('emailsList').innerHTML = '<div class="no-data">Error loading: ' + e.message + '</div>';
-    }
-  }
-
-  function updateStats() {
-    const today = new Date(); today.setHours(0,0,0,0);
-    const todayCount = allChats.filter(c => { const d = c.timestamp?.toDate?.(); return d && d >= today; }).length;
-    const uniqueUsers = new Set(allChats.map(c => c.userEmail)).size;
-    document.getElementById('totalChats').textContent = allChats.length;
-    document.getElementById('totalUsers').textContent = uniqueUsers;
-    document.getElementById('todayChats').textContent = todayCount;
-  }
-
-  function renderEmails() {
-    const emailMap = {};
-    allChats.forEach(c => {
-      const email = c.userEmail || 'Unknown';
-      if (!emailMap[email]) emailMap[email] = { count: 0, last: null };
-      emailMap[email].count++;
-      const d = c.timestamp?.toDate?.();
-      if (d && (!emailMap[email].last || d > emailMap[email].last)) emailMap[email].last = d;
-    });
-
-    const emails = Object.entries(emailMap).sort((a,b) => (b[1].last||0) - (a[1].last||0));
-    if (emails.length === 0) { document.getElementById('emailsList').innerHTML = '<div class="no-data">No users yet</div>'; return; }
-
-    document.getElementById('emailsList').innerHTML = emails.map(([email, info]) => `
-      <div class="email-card" onclick="showDays('${email}')">
-        <div class="email-left">
-          <div class="email-addr">📧 ${email}</div>
-          <div class="email-meta">Last active: ${info.last ? info.last.toLocaleDateString() : 'Unknown'}</div>
-        </div>
-        <div class="email-count">${info.count} chats</div>
-      </div>
-    `).join('');
-  }
-
-  window.showDays = (email) => {
-    selectedEmail = email;
-    const userChats = allChats.filter(c => (c.userEmail || 'Unknown') === email);
-    const dayMap = {};
-    userChats.forEach(c => {
-      const d = c.timestamp?.toDate?.();
-      const key = d ? d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : 'Unknown';
-      if (!dayMap[key]) dayMap[key] = { count: 0, date: d };
-      dayMap[key].count++;
-    });
-
-    const days = Object.entries(dayMap).sort((a,b) => (b[1].date||0) - (a[1].date||0));
-    document.getElementById('daysTitle').textContent = `📅 ${email}`;
-    document.getElementById('daysList').innerHTML = days.map(([day, info]) => `
-      <div class="day-card" onclick="showChats('${email}', '${day}')">
-        <div class="day-date">📅 ${day}</div>
-        <div class="day-count">${info.count} chats</div>
-      </div>
-    `).join('');
-
-    showView('viewDays');
-    document.getElementById('breadcrumb').innerHTML = `
-      <span onclick="showView('viewEmails'); updateBreadcrumb('home')">All Users</span>
-      <span class="sep">›</span>
-      <span class="current">${email}</span>
-    `;
-  };
-
-  window.showChats = (email, day) => {
-    const userChats = allChats.filter(c => {
-      const d = c.timestamp?.toDate?.();
-      const key = d ? d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : 'Unknown';
-      return (c.userEmail || 'Unknown') === email && key === day;
-    });
-
-    document.getElementById('chatsTitle').textContent = `💬 ${day}`;
-    document.getElementById('chatsList').innerHTML = userChats.map(c => {
-      const d = c.timestamp?.toDate?.();
-      const time = d ? d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
-      return `
-        <div class="chat-card">
-          <div class="chat-time">🕐 ${time}</div>
-          <div class="chat-label">USER</div>
-          <div class="chat-user-text">▶ ${c.userText || ''}</div>
-          <div class="chat-label" style="margin-top:8px">NEXA</div>
-          <div class="chat-ai-text">⚡ ${c.aiText || ''}</div>
-        </div>
-      `;
-    }).join('');
-
-    showView('viewChats');
-    document.getElementById('breadcrumb').innerHTML = `
-      <span onclick="showView('viewEmails')">All Users</span>
-      <span class="sep">›</span>
-      <span onclick="showDays('${email}')">${email}</span>
-      <span class="sep">›</span>
-      <span class="current">${day}</span>
-    `;
-  };
-
-  function showView(viewId) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
-    if (viewId === 'viewEmails') {
-      document.getElementById('breadcrumb').innerHTML = '<span class="current">All Users</span>';
-    }
-  }
-  window.showView = showView;
 </script>
 </body>
 </html>
