@@ -73,6 +73,12 @@
     .prompt-save-btn { margin-top: 10px; padding: 10px 24px; border-radius: 8px; border: 1px solid rgba(245,200,66,0.4); background: rgba(245,200,66,0.1); color: rgba(245,200,66,0.9); font-family: 'Orbitron', monospace; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
     .prompt-save-btn:hover { background: rgba(245,200,66,0.2); }
     .prompt-save-msg { display: none; margin-top: 8px; font-size: 0.78rem; color: rgba(100,255,100,0.8); }
+
+    /* GREETING SECTION */
+    .greeting-section { background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.15); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .greeting-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .greeting-input { width: 100%; padding: 10px 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(245,200,66,0.2); border-radius: 8px; color: white; font-size: 0.85rem; font-family: 'Rajdhani', sans-serif; outline: none; }
+    .greeting-input::placeholder { color: rgba(245,200,66,0.2); }
     .back-btn { padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(245,200,66,0.2); background: transparent; color: rgba(245,200,66,0.6); font-family: 'Orbitron', monospace; font-size: 0.7rem; cursor: pointer; margin-bottom: 16px; transition: all 0.2s; }
     .back-btn:hover { background: rgba(245,200,66,0.1); color: rgba(245,200,66,0.9); }
     .section-title { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: rgba(245,200,66,0.5); letter-spacing: 2px; margin-bottom: 14px; }
@@ -101,6 +107,19 @@
 
   <div class="breadcrumb" id="breadcrumb">
     <span class="current">All Users</span>
+  </div>
+
+  <!-- Custom Greetings -->
+  <div class="greeting-section">
+    <div class="prompt-title">👋 CUSTOM GREETINGS</div>
+    <div class="greeting-inputs">
+      <input class="greeting-input" id="greetingEmail" placeholder="User email (e.g. ali@gmail.com)" />
+      <input class="greeting-input" id="greetingName" placeholder="Display name (e.g. Ali Bhai)" />
+      <input class="greeting-input" id="greetingMessage" placeholder="Custom greeting message..." />
+    </div>
+    <button class="prompt-save-btn" onclick="saveGreeting()">💾 SAVE GREETING</button>
+    <div class="prompt-save-msg" id="greetingSaveMsg">✅ Saved!</div>
+    <div style="margin-top:16px" id="greetingsList"></div>
   </div>
 
   <!-- System Prompt Editor -->
@@ -152,6 +171,7 @@
   let allChats = [];
   let selectedEmail = '';
   let currentPrompt = '';
+  let customGreetings = {};
 
   onAuthStateChanged(auth, (user) => {
     if (user && user.email === ADMIN_EMAIL) {
@@ -159,6 +179,7 @@
       document.getElementById('adminPanel').style.display = 'block';
       loadAllChats();
       loadSystemPrompt();
+      loadCustomGreetings();
     } else if (user) {
       document.getElementById('errorMsg').style.display = 'block';
       signOut(auth);
@@ -167,6 +188,57 @@
 
   window.adminLogin = async () => { try { await signInWithPopup(auth, provider); } catch(e) { console.error(e); } };
   window.adminLogout = async () => { await signOut(auth); location.reload(); };
+
+  async function loadCustomGreetings() {
+    try {
+      const snap = await getDocs(query(collection(db, 'customGreetings')));
+      customGreetings = {};
+      snap.forEach(d => { customGreetings[d.id] = d.data(); });
+      renderGreetings();
+    } catch(e) { console.error(e); }
+  }
+
+  function renderGreetings() {
+    const container = document.getElementById('greetingsList');
+    const entries = Object.entries(customGreetings);
+    if (entries.length === 0) { container.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-size:0.8rem;padding:10px 0">No custom greetings yet</div>'; return; }
+    container.innerHTML = entries.map(([email, data]) => `
+      <div style="background:rgba(245,200,66,0.04);border:1px solid rgba(245,200,66,0.12);border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div>
+          <div style="font-size:0.82rem;color:rgba(245,200,66,0.8)">📧 ${email}</div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:4px">${data.message || ''}</div>
+        </div>
+        <div style="cursor:pointer;color:rgba(255,80,80,0.6);font-size:0.75rem;border:1px solid rgba(255,80,80,0.2);border-radius:6px;padding:4px 10px" onclick="deleteGreeting('${email}')">🗑</div>
+      </div>
+    `).join('');
+  }
+
+  window.saveGreeting = async () => {
+    const email = document.getElementById('greetingEmail').value.trim().toLowerCase();
+    const name = document.getElementById('greetingName').value.trim();
+    const message = document.getElementById('greetingMessage').value.trim();
+    if (!email || !message) { alert('Email aur message zaroor bharo!'); return; }
+    try {
+      const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+      await setDoc(doc(db, 'customGreetings', email), { name, message, email, createdAt: new Date().toISOString() });
+      document.getElementById('greetingEmail').value = '';
+      document.getElementById('greetingName').value = '';
+      document.getElementById('greetingMessage').value = '';
+      document.getElementById('greetingSaveMsg').style.display = 'block';
+      setTimeout(() => document.getElementById('greetingSaveMsg').style.display = 'none', 2000);
+      customGreetings[email] = { name, message, email };
+      renderGreetings();
+    } catch(e) { alert('Error: ' + e.message); }
+  };
+
+  window.deleteGreeting = async (email) => {
+    try {
+      const { deleteDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+      await deleteDoc(doc(db, 'customGreetings', email));
+      delete customGreetings[email];
+      renderGreetings();
+    } catch(e) { console.error(e); }
+  };
 
   async function loadSystemPrompt() {
     try {

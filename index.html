@@ -279,6 +279,18 @@
   }
   loadPromptFromDB();
 
+  // Load custom greeting for current user
+  window.loadCustomGreeting = async (userEmail) => {
+    try {
+      const snap = await getDocs(query(collection(db, 'customGreetings')));
+      let greeting = null;
+      snap.forEach(d => {
+        if (d.id === userEmail.toLowerCase()) greeting = d.data();
+      });
+      return greeting;
+    } catch(e) { return null; }
+  };
+
   window.startNewConversation = async () => {
     const user = auth.currentUser;
     if (!user) return null;
@@ -443,8 +455,15 @@
       document.getElementById('chatBar').style.animation='slideUp 0.6s ease 0.3s forwards';
       setTimeout(async ()=>{
         window.currentConvId = await window.startNewConversation();
-        addMsg('HELLO! 👋', 'ai');
-        setTimeout(()=>{ addMsg("What's your name? 😊", 'ai'); nameAsked = true; }, 1000);
+        const greeting = window.loadCustomGreeting ? await window.loadCustomGreeting(user.email) : null;
+        if (greeting) {
+          const name = greeting.name || user.displayName || 'there';
+          addMsg(`Welcome back, ${name}! 👋`, 'ai');
+          setTimeout(()=>{ addMsg(greeting.message, 'ai'); }, 800);
+        } else {
+          addMsg('HELLO! 👋', 'ai');
+          setTimeout(()=>{ addMsg("What's your name? 😊", 'ai'); nameAsked = true; }, 1000);
+        }
       }, 800);
     },4300);
   }
