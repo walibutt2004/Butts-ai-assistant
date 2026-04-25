@@ -51,6 +51,9 @@ app.post('/ai-response', async (req, res) => {
   }
 });
 
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', hf_token: process.env.HF_TOKEN ? 'SET ✅' : 'MISSING ❌' });
+});
 // IMAGE GENERATION
 app.post('/generate-image', async (req, res) => {
   try {
