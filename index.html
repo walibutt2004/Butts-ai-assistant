@@ -19,6 +19,18 @@
     .google-btn { display: flex; align-items: center; gap: 12px; padding: 14px 28px; border-radius: 50px; border: 1px solid rgba(245,200,66,0.4); background: rgba(245,200,66,0.08); color: rgba(245,200,66,0.95); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Orbitron', monospace; letter-spacing: 1px; transition: all 0.3s; }
     .google-btn:hover { background: rgba(245,200,66,0.15); transform: scale(1.03); }
     .login-by { font-size: 0.7rem; color: rgba(245,200,66,0.3); letter-spacing: 2px; }
+    .auth-tabs { display: flex; width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid rgba(245,200,66,0.2); margin-bottom: 4px; }
+    .auth-tab { flex: 1; padding: 10px; border: none; background: transparent; color: rgba(245,200,66,0.5); font-family: 'Orbitron', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
+    .auth-tab.active { background: rgba(245,200,66,0.15); color: rgba(245,200,66,0.95); }
+    .auth-input { width: 100%; padding: 11px 16px; background: rgba(245,200,66,0.05); border: 1px solid rgba(245,200,66,0.2); border-radius: 10px; color: white; font-size: 0.9rem; outline: none; font-family: 'Rajdhani', sans-serif; transition: border 0.2s; }
+    .auth-input:focus { border-color: rgba(245,200,66,0.5); }
+    .auth-input::placeholder { color: rgba(245,200,66,0.3); }
+    .auth-submit { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(245,200,66,0.4); background: rgba(245,200,66,0.12); color: rgba(245,200,66,0.95); font-family: 'Orbitron', monospace; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; }
+    .auth-submit:hover { background: rgba(245,200,66,0.22); }
+    .auth-error { display: none; font-size: 0.78rem; color: rgba(255,100,100,0.9); text-align: center; padding: 4px 0; }
+    .auth-divider { display: flex; align-items: center; gap: 10px; width: 100%; }
+    .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: rgba(245,200,66,0.15); }
+    .auth-divider span { font-size: 0.75rem; color: rgba(245,200,66,0.3); }
 
     /* INTRO */
     #introScreen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #080800; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 16px; }
@@ -144,7 +156,15 @@
   <div class="login-logo">NEXA</div>
   <div class="login-subtitle">Your AI Assistant</div>
   <div class="login-card">
-    <p>Sign in to continue</p>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">LOGIN</button>
+      <button class="auth-tab" id="tabSignup" onclick="switchAuthTab('signup')">SIGN UP</button>
+    </div>
+    <input type="email" class="auth-input" id="authEmail" placeholder="Email address" />
+    <input type="password" class="auth-input" id="authPassword" placeholder="Password" />
+    <div class="auth-error" id="authError"></div>
+    <button class="auth-submit" id="authSubmitBtn" onclick="loginWithEmail()">LOGIN</button>
+    <div class="auth-divider"><span>or</span></div>
     <button class="google-btn" onclick="loginWithGoogle()">🔑 Continue with Google</button>
     <div class="login-by">By Kh. Wali Abdullah Butt</div>
   </div>
@@ -225,7 +245,7 @@
 <!-- Firebase -->
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
   import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, query, where, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
 
   const firebaseConfig = {
@@ -245,10 +265,12 @@
   onAuthStateChanged(auth, (user) => {
     if (user) {
       document.getElementById('loginScreen').style.display = 'none';
-      showIntro(user);
+      const isNew = window.isNewUser === true;
+      window.isNewUser = false;
+      showIntro(user, isNew);
       document.getElementById('topAvatar').src = user.photoURL || '';
       document.getElementById('sidebarAvatar').src = user.photoURL || '';
-      document.getElementById('sidebarName').textContent = user.displayName || 'User';
+      document.getElementById('sidebarName').textContent = user.displayName || user.email || 'User';
       document.getElementById('sidebarEmail').textContent = user.email || '';
     } else {
       document.getElementById('loginScreen').style.display = 'flex';
@@ -259,34 +281,56 @@
   });
 
   window.loginWithGoogle = async () => {
-    try { await signInWithPopup(auth, provider); } catch(e) { console.error(e); }
+    try { await signInWithPopup(auth, provider); } catch(e) { showAuthError(e.code); }
   };
 
-  window.logoutUser = async () => {
-    await signOut(auth); closeSidebar();
+  window.loginWithEmail = async () => {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value.trim();
+    if (!email || !password) { showAuthError('fill-all'); return; }
+    try { window.isNewUser = false; await signInWithEmailAndPassword(auth, email, password); }
+    catch(e) { showAuthError(e.code); }
   };
 
-  // Load system prompt from Firestore
+  window.signupWithEmail = async () => {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value.trim();
+    if (!email || !password) { showAuthError('fill-all'); return; }
+    try { window.isNewUser = true; await createUserWithEmailAndPassword(auth, email, password); }
+    catch(e) { showAuthError(e.code); }
+  };
+
+  window.showAuthError = (code) => {
+    const msgs = {
+      'fill-all': 'Please fill all fields!',
+      'auth/email-already-in-use': 'Email already registered! Please login.',
+      'auth/user-not-found': 'Account not found! Please signup.',
+      'auth/wrong-password': 'Wrong password!',
+      'auth/invalid-email': 'Invalid email address!',
+      'auth/weak-password': 'Password too weak! Min 6 characters.',
+      'auth/invalid-credential': 'Wrong email or password!'
+    };
+    const el = document.getElementById('authError');
+    el.textContent = msgs[code] || 'Something went wrong!';
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 4000);
+  };
+
+  window.logoutUser = async () => { await signOut(auth); closeSidebar(); };
+
   async function loadPromptFromDB() {
     try {
       const snap = await getDocs(query(collection(db, 'settings')));
-      snap.forEach(d => {
-        if (d.id === 'system_prompt' && d.data().prompt) {
-          window.SYSTEM_PROMPT = d.data().prompt;
-        }
-      });
+      snap.forEach(d => { if (d.id === 'system_prompt' && d.data().prompt) window.SYSTEM_PROMPT = d.data().prompt; });
     } catch(e) { console.error('Prompt load error:', e); }
   }
   loadPromptFromDB();
 
-  // Load custom greeting for current user
   window.loadCustomGreeting = async (userEmail) => {
     try {
       const snap = await getDocs(query(collection(db, 'customGreetings')));
       let greeting = null;
-      snap.forEach(d => {
-        if (d.id === userEmail.toLowerCase()) greeting = d.data();
-      });
+      snap.forEach(d => { if (d.id === userEmail.toLowerCase()) greeting = d.data(); });
       return greeting;
     } catch(e) { return null; }
   };
@@ -296,12 +340,8 @@
     if (!user) return null;
     try {
       const ref = await addDoc(collection(db, 'conversations'), {
-        userId: user.uid,
-        userEmail: user.email,
-        messages: [],
-        lastMessage: '',
-        lastUpdated: serverTimestamp(),
-        createdAt: serverTimestamp()
+        userId: user.uid, userEmail: user.email, messages: [],
+        lastMessage: '', lastUpdated: serverTimestamp(), createdAt: serverTimestamp()
       });
       return ref.id;
     } catch(e) { console.error('Conv error:', e); return null; }
@@ -316,11 +356,7 @@
       let messages = [];
       snap.forEach(d => { if(d.id === window.currentConvId) messages = d.data().messages || []; });
       messages.push({ userText, aiText, time: new Date().toISOString() });
-      await updateDoc(convRef, {
-        messages,
-        lastMessage: userText,
-        lastUpdated: serverTimestamp()
-      });
+      await updateDoc(convRef, { messages, lastMessage: userText, lastUpdated: serverTimestamp() });
     } catch(e) { console.error('Save error:', e); }
   };
 
@@ -333,11 +369,9 @@
       const q = query(collection(db, 'conversations'), where('userId','==',user.uid));
       const snap = await getDocs(q);
       if (snap.empty) { container.innerHTML = '<div class="no-history">No chats yet</div>'; return; }
-
       let convs = [];
       snap.forEach(d => convs.push({ id: d.id, ...d.data() }));
       convs.sort((a,b) => (b.lastUpdated?.seconds||0) - (a.lastUpdated?.seconds||0));
-
       container.innerHTML = '';
       convs.forEach(conv => {
         const messages = conv.messages || [];
@@ -345,7 +379,6 @@
         const lastMsg = messages[messages.length-1];
         const date = conv.lastUpdated?.toDate?.();
         const dateStr = date ? date.toLocaleDateString()+' '+date.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
-
         const div = document.createElement('div');
         div.className = 'history-item';
         div.style.position = 'relative';
@@ -358,24 +391,18 @@
           closeSidebar();
           document.getElementById('chatArea').innerHTML = '';
           window.currentConvId = conv.id;
-          messages.forEach(m => {
-            addMsg(m.userText, 'user');
-            addMsg(m.aiText, 'ai');
-          });
+          messages.forEach(m => { addMsg(m.userText, 'user'); addMsg(m.aiText, 'ai'); });
         };
         container.appendChild(div);
       });
     } catch(e) {
-      console.error('Load error:', e);
       container.innerHTML = '<div class="no-history">Error: ' + e.message + '</div>';
     }
   };
 
   window.deleteConv = async (convId) => {
-    try {
-      await deleteDoc(doc(db, 'conversations', convId));
-      window.loadSidebarHistory();
-    } catch(e) { console.error('Delete error:', e); }
+    try { await deleteDoc(doc(db, 'conversations', convId)); window.loadSidebarHistory(); }
+    catch(e) { console.error('Delete error:', e); }
   };
 </script>
 
@@ -437,7 +464,15 @@
   animateSphere();
 
   // Intro
-  function showIntro(user) {
+  function switchAuthTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('tabLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabSignup').classList.toggle('active', !isLogin);
+    document.getElementById('authSubmitBtn').textContent = isLogin ? 'LOGIN' : 'SIGN UP';
+    document.getElementById('authSubmitBtn').onclick = isLogin ? loginWithEmail : signupWithEmail;
+  }
+
+  function showIntro(user, isNew = false) {
     const intro = document.getElementById('introScreen');
     intro.style.display = 'flex';
     setTimeout(()=>{ const w=document.getElementById('introWelcome'); w.style.transition='opacity 0.8s'; w.style.opacity='1'; },300);
@@ -458,11 +493,14 @@
         const greeting = window.loadCustomGreeting ? await window.loadCustomGreeting(user.email) : null;
         if (greeting) {
           const name = greeting.name || user.displayName || 'there';
-          addMsg(`Welcome back, ${name}! 👋`, 'ai');
+          addMsg(isNew ? `Welcome, ${name}! I am NEXA, your AI assistant by Kh. Wali Abdullah Butt. 👋` : `Welcome back to NEXA, ${name}! 👋`, 'ai');
           setTimeout(()=>{ addMsg(greeting.message, 'ai'); }, 800);
-        } else {
-          addMsg('HELLO! 👋', 'ai');
+        } else if (isNew) {
+          addMsg("Welcome! I'm NEXA, your AI assistant by Kh. Wali Abdullah Butt. 👋", 'ai');
           setTimeout(()=>{ addMsg("What's your name? 😊", 'ai'); nameAsked = true; }, 1000);
+        } else {
+          addMsg('Welcome back to NEXA! 👋', 'ai');
+          setTimeout(()=>{ addMsg("How can I help you today? 😊", 'ai'); }, 800);
         }
       }, 800);
     },4300);
