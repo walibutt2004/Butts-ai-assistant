@@ -475,6 +475,19 @@
   function showIntro(user, isNew = false) {
     const intro = document.getElementById('introScreen');
     intro.style.display = 'flex';
+
+    if (isNew) {
+      document.getElementById('introWelcome').textContent = 'WELCOME';
+      document.getElementById('introName').textContent = 'I am NEXA';
+      document.getElementById('introTagline').textContent = 'Your AI Assistant';
+      document.getElementById('introBy').textContent = 'By Kh. Wali Abdullah Butt';
+    } else {
+      document.getElementById('introWelcome').textContent = 'WELCOME BACK';
+      document.getElementById('introName').textContent = 'to NEXA';
+      document.getElementById('introTagline').textContent = user.displayName || user.email || '';
+      document.getElementById('introBy').textContent = 'Good to see you again!';
+    }
+
     setTimeout(()=>{ const w=document.getElementById('introWelcome'); w.style.transition='opacity 0.8s'; w.style.opacity='1'; },300);
     setTimeout(()=>{ const l=document.getElementById('introLine'); l.style.transition='width 0.6s'; l.style.width='200px'; },1200);
     setTimeout(()=>{ const n=document.getElementById('introName'); n.style.transition='opacity 0.6s'; n.style.opacity='1'; },1600);
