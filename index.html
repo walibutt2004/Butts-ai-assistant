@@ -35,7 +35,7 @@
     /* INTRO */
     #introScreen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #080800; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 16px; }
     .intro-welcome { font-family: 'Orbitron', monospace; font-size: clamp(1.8rem, 8vw, 3.5rem); font-weight: 900; background: linear-gradient(90deg, #f5c842, #fff7c0, #f5c842); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: goldShine 2s linear infinite; letter-spacing: clamp(4px, 2vw, 10px); opacity: 0; width: 100%; text-align: center; padding: 0 16px; }
-    .intro-name { font-family: 'Orbitron', monospace; font-size: 1.8rem; font-weight: 700; color: rgba(255,255,255,0.9); letter-spacing: 4px; opacity: 0; }
+    .intro-name { font-family: 'Orbitron', monospace; font-size: 3rem; font-weight: 700; color: rgba(255,255,255,0.9); letter-spacing: 4px; opacity: 0; }
     .intro-tagline { font-size: 1rem; color: rgba(245,200,66,0.7); letter-spacing: 3px; text-transform: uppercase; opacity: 0; }
     .intro-by { font-size: 0.72rem; color: rgba(245,200,66,0.4); letter-spacing: 2px; margin-top: 8px; opacity: 0; }
     .intro-line { width: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(245,200,66,0.6), transparent); margin: 8px 0; }
@@ -482,10 +482,10 @@
       document.getElementById('introTagline').textContent = 'Your AI Assistant';
       document.getElementById('introBy').textContent = 'By Kh. Wali Abdullah Butt';
     } else {
-      document.getElementById('introWelcome').textContent = 'WELCOME BACK';
-      document.getElementById('introName').textContent = 'to NEXA';
-      document.getElementById('introTagline').textContent = user.displayName || user.email || '';
-      document.getElementById('introBy').textContent = 'Good to see you again!';
+      document.getElementById('introWelcome').textContent = 'Welcome Back to';
+      document.getElementById('introName').textContent = 'NEXA';
+      document.getElementById('introTagline').textContent = '';
+      document.getElementById('introBy').textContent = 'By Kh. Wali Abdullah Butt';
     }
 
     setTimeout(()=>{ const w=document.getElementById('introWelcome'); w.style.transition='opacity 0.8s'; w.style.opacity='1'; },300);
